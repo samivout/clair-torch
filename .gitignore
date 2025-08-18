@@ -1,0 +1,11 @@
+/tests/.hypothesis/
+/shelf/
+/workspace.xml
+/.idea/
+/camera_linearity_torch.iml
+/misc.xml
+/modules.xml
+/inspectionProfiles/profiles_settings.xml
+/inspectionProfiles/Project_Default.xml
+/vcs.xml
+/Pipfile.lock

@@ -1,0 +1,35 @@
+paths:
+  image_filetype: ".tif"                # The filetype, which the program should seek for in case of image files.
+  image_root: "data/images"             # Input path for the main value images and optional uncertainty images.
+  flatfield_root: "data/flatfields"     # Optional input directory for flatfield images, used for fixed pattern and vignette correction.
+  darkfield_root: "data/darkfields"     # Optional input directory for darkfield images, used for bad pixel filtering.
+  output_root: "results/torch_output"   # Output directory for the resulting files.
+  icrf_path: "data/icrfs/icrf.txt"      # Filepath to the icrf.txt file.
+
+dataset:
+  missing_std_mode: "multiplier"        # Determines the handling for missing uncertainty images. multiplier, constant or none
+  missing_std_value: "0.05"             # Value associated with the missing uncertainty handling, e.g. uses this value in constant mode, or multiplies main image with this in multiplier mode.
+
+dataloader:
+  batch_size: 4                         # The batch size to use with a dataloader in various functions in this project.
+  shuffle: true                         # Whether to shuffle the data order.
+  drop_last: false                      # Whether to drop last batch if it is not a full batch.
+  pin_memory: false                     # Whether to let the dataloader pin memory.
+
+model:
+  n_points: 256                         # The number of datapoints (e.g. model weights) to use with an ICRF curve.
+  channels: 3                           # The number of channels to use in an ICRF model. Must match with the number of channels in images fed to the model.
+  interpolation_mode: "linear"          # Interpolation mode. Currently, either linear or catmull. Catmull uses a lot more memory.
+  initial_power: 2.5                    # An initial guess at the shape of the ICRF curve. Values in the range 1-5 are likely the best.
+
+training:
+  learning_rate: 0.001                  # The learning rate for the Adam optimizers.
+  epochs: 1200                          # Epoch limit for training.
+  alpha: 1000                           # coefficient for monotonicity penalty term.
+  beta: 1                               # coefficient for range penalty term.
+  gamma: 1                              # coefficient for endpoint penalty term.
+  delta: 1                              # coefficient for smoothness penalty term.
+  patience: 200                         # number of epochs until early stopping when loss does not improve.
+  use_relative_linearity_loss: true     # whether to use relative (True) or absolute values (False) for linearity loss computation.
+  use_uncertainty_weighting: false      # whether to utilize inverse uncertainty based weights in loss computation.
+  device: "cpu"                         # The device on which to train. cpu or cuda if you have NVIDIA GPU with cuda available.

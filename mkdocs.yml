@@ -1,0 +1,10 @@
+site_name: camera-linearity-torch docs
+
+theme:
+  name: "material"
+
+extra_css:
+  - extra.css
+
+plugins:
+  - mkdocstrings
