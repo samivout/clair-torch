@@ -209,3 +209,8 @@ def tag_process():
         commit_and_tag(new, remote)
     else:
         print("Aborted.")
+
+
+if __name__ == "__main__":
+    tag_process()
+
