@@ -1,3 +1,4 @@
+import pathlib
 import re
 
 import pytest
@@ -8,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
+import clair_torch.common.general_functions
 from clair_torch.common.enums import ChannelOrder
 import clair_torch.common.data_io as io
 
@@ -95,7 +97,8 @@ class TestLoadImage:
         mock_transform = MagicMock()
         mock_transform.return_value = torch.ones_like(reference_data_as_torch)
 
-        with patch("clair_torch.common.data_io.normalize_container", return_value=[mock_transform]):
+        with patch.object(clair_torch.common.data_io, clair_torch.common.data_io.normalize_container.__name__,
+                          return_value=[mock_transform]):
             _ = io.load_image(img_path, transforms=mock_transform)
 
         mock_transform.assert_called_once()
@@ -113,7 +116,8 @@ class TestLoadImage:
         mock_transform_1.return_value = torch.ones_like(reference_data_as_torch)
         mock_transform_2.return_value = torch.ones_like(reference_data_as_torch)
 
-        with patch("clair_torch.common.data_io.normalize_container", return_value=[mock_transform_1, mock_transform_2]):
+        with patch.object(clair_torch.common.data_io, clair_torch.common.data_io.normalize_container.__name__,
+                          return_value=[mock_transform_1, mock_transform_2]):
             _ = io.load_image(img_path, transforms=(mock_transform_1, mock_transform_2))
 
         mock_transform_1.assert_called_once()
@@ -126,9 +130,9 @@ class TestLoadImage:
         class FakeTransform:
             pass
 
-        with (patch("clair_torch.common.data_io.cv.imread", return_value=dummy_image),
-              patch("pathlib.Path.exists", return_value=True),
-              patch("pathlib.Path.is_file", return_value=True)):
+        with (patch.object(clair_torch.common.data_io.cv, clair_torch.common.data_io.cv.imread.__name__, return_value=dummy_image),
+              patch.object(pathlib.Path, pathlib.Path.exists.__name__, return_value=True),
+              patch.object(pathlib.Path, pathlib.Path.is_file.__name__, return_value=True)):
 
             transforms = [FakeTransform()]
 
@@ -280,8 +284,8 @@ class TestLoadVideoFramesGenerator:
             (False, None)  # End of video
         ]
 
-        with (patch("clair_torch.common.data_io.cv.VideoCapture", return_value=mock_cap),
-              patch("clair_torch.common.data_io.validate_input_file_path")):
+        with (patch.object(clair_torch.common.data_io.cv, clair_torch.common.data_io.cv.VideoCapture.__name__, return_value=mock_cap),
+              patch.object(clair_torch.common.data_io, clair_torch.common.data_io.validate_input_file_path.__name__)):
 
             frames = list(io.load_video_frames_generator(tmp_path, transforms=None))
 

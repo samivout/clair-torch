@@ -18,6 +18,11 @@ class TestCvToTorch:
 
         mock.assert_called_once_with(x)
 
+    def test_cv_to_torch_to_config(self):
+
+        transform = tr.CvToTorch()
+        assert transform.to_config() == {}
+
 
 class TestTorchToCv:
 
@@ -31,65 +36,17 @@ class TestTorchToCv:
 
         mock.assert_called_once_with(x)
 
+    def test_torch_to_cv_to_config(self):
 
-class TestBadPixelCorrection:
-
-    def test_bad_pixel_correction(self):
-
-        bad_pixel_map = torch.ones((2, 2))
-        threshold = 1.0
-        kernel_size = 1
-
-        with patch("clair_torch.common.transforms.conditional_gaussian_blur") as mock:
-
-            transform = tr.BadPixelCorrection(bad_pixel_map, threshold, kernel_size)
-            _ = transform(bad_pixel_map)
-
-        mock.assert_called_once_with(bad_pixel_map, bad_pixel_map, threshold, kernel_size)
-
-    def test_bad_pixel_correction_invalid_args(self):
-
-        good_map = torch.ones((2, 2))
-        bad_map = "this is bad"
-        good_threshold = 0.5
-        bad_threshold = "this is bad"
-        good_kernel_size = 2
-        bad_kernel_size = "this is bad"
-
-        combinations = [
-            [bad_map, good_threshold, good_kernel_size],
-            [good_map, bad_threshold, good_kernel_size],
-            [good_map, good_threshold, bad_kernel_size]
-        ]
-
-        for combination in combinations:
-            with pytest.raises(TypeError):
-
-                arg1, arg2, arg3 = combination
-                _ = tr.BadPixelCorrection(arg1, arg2, arg3)
-
-        with pytest.raises(ValueError):
-
-            _ = tr.BadPixelCorrection(good_map, good_threshold, 0)
-
-    def test_bad_pixel_correction_clear_memory(self):
-
-        pixel_map = torch.ones((2, 2))
-        threshold = 0.5
-        kernel_size = 1
-
-        transform = tr.BadPixelCorrection(pixel_map, threshold, kernel_size)
-
-        assert torch.allclose(pixel_map, transform.bad_pixel_map)
-        transform.clear_memory()
-        assert transform.bad_pixel_map is None
+        transform = tr.TorchToCv()
+        assert transform.to_config() == {}
 
 
 class TestStridedDownScale:
 
     def test_strided_downscale(self):
 
-        transform = tr.StridedDownScale(step_size=2)
+        transform = tr.StridedDownscale(step_size=2)
 
         assert transform.step_size == 2
 
@@ -99,9 +56,20 @@ class TestStridedDownScale:
         too_small = -1
 
         with pytest.raises(TypeError):
-            _ = tr.StridedDownScale(bad_type)
+            _ = tr.StridedDownscale(bad_type)
         with pytest.raises(ValueError):
-            _ = tr.StridedDownScale(too_small)
+            _ = tr.StridedDownscale(too_small)
+
+    def test_strided_downscale_config_roundtrip(self):
+
+        transform = tr.StridedDownscale(step_size=2)
+        expected = {"step_size": 2}
+
+        assert transform.to_config() == expected
+
+        transform_2 = tr.StridedDownscale.from_config(expected)
+
+        assert transform.step_size == transform_2.step_size
 
 
 class TestCastTo:
@@ -131,21 +99,33 @@ class TestCastTo:
             assert both_modified.dtype == torch.float64
             assert both_modified.device == cpu_device
 
-    def test_cast_to_invalid_args(self):
+    def test_cast_to_invalid_device(self):
 
         good_dtype = torch.float32
-        bad_dtype = "this is bad"
-        good_device = torch.device("cpu")
         bad_device = "this is bad"
 
-        combinations = [
-            [bad_dtype, good_device], [good_dtype, bad_device]
-        ]
+        with pytest.raises(RuntimeError):
+            _ = tr.CastTo(good_dtype, bad_device)
 
-        for combination in combinations:
-            with pytest.raises(TypeError):
-                arg1, arg2 = combination
-                _ = tr.CastTo(arg1, arg2)
+    def test_cast_to_invalid_dtype(self):
+
+        bad_dtype = "this is bad"
+        good_device = torch.device("cpu")
+
+        with pytest.raises(KeyError):
+            _ = tr.CastTo(bad_dtype, good_device)
+
+    def test_cast_to_config_roundtrip(self):
+
+        transform = tr.CastTo(data_type=torch.float32, device=torch.device("cpu"))
+        expected = {"data_type": "float32", "device": "cpu"}
+
+        assert transform.to_config() == expected
+
+        transform_2 = tr.CastTo.from_config(expected)
+
+        assert transform.device == transform_2.device
+        assert transform.data_type == transform_2.data_type
 
 
 class TestNormalize:
@@ -163,6 +143,19 @@ class TestNormalize:
         assert normalize.max_val == 1.0
         mock.assert_called_once_with(input_tensor, min_val=0.0, max_val=1.0, target_range=(0.0, 1.0))
 
+    def test_normalize_config_roundtrip(self):
+
+        transform = tr.Normalize(min_val=None, max_val=None, target_range=(0.0, 1.0))
+        expected = {"min_val": None, "max_val": None, "target_range": [0.0, 1.0]}
+
+        assert transform.to_config() == expected
+
+        transform_2 = tr.Normalize.from_config(expected)
+
+        assert transform.min_val == transform_2.min_val
+        assert transform.max_val == transform_2.max_val
+        assert transform.target_range == transform_2.target_range
+
 
 class TestClampAlongDims:
 
@@ -178,3 +171,51 @@ class TestClampAlongDims:
             _ = transform(x)
 
         mock.assert_called_once_with(x, dim, min_max_pairs)
+
+    @pytest.mark.parametrize("min_max_pairs, expected", [
+        ((0.0, 1.0), {"dim": (1, 2), "min_max_pairs": (0.0, 1.0)}),
+        ([(0.0, 1.0), (0.1, 0.9)], {"dim": (1, 2), "min_max_pairs": [(0.0, 1.0), (0.1, 0.9)]})
+    ])
+    def test_clamp_along_dims_config_roundtrip(self, min_max_pairs, expected):
+
+        dim = (1, 2)
+        transform = tr.ClampAlongDims(dim=dim, min_max_pairs=min_max_pairs)
+
+        assert transform.to_config() == expected
+
+        transform_2 = tr.ClampAlongDims.from_config(expected)
+
+        assert transform.dim == transform_2.dim
+        assert transform.min_max_pairs == transform_2.min_max_pairs
+
+
+class TestSerializeTransforms:
+
+    def test_serialize_transforms(self):
+
+        expected = [{'params': 'dummy', 'type': 'Normalize'}, {'params': 'dummy', 'type': 'CvToTorch'}]
+
+        with (patch("clair_torch.common.transforms.Normalize.to_config", return_value="dummy"),
+              patch("clair_torch.common.transforms.CvToTorch.to_config", return_value="dummy")):
+
+            transform_1 = tr.Normalize()
+            transform_2 = tr.CvToTorch()
+
+            serialized = tr.serialize_transforms([transform_1, transform_2])
+
+            assert serialized == expected
+
+
+class TestDeserializeTransforms:
+
+    def test_deserialize_transforms(self):
+
+        serialized = [{'params': 'dummy', 'type': 'Normalize'}, {'params': 'dummy', 'type': 'CvToTorch'}]
+
+        with (patch("clair_torch.common.transforms.Normalize.from_config", return_value="dummy_1"),
+              patch("clair_torch.common.transforms.CvToTorch.from_config", return_value="dummy_2")):
+
+            deserialized = tr.deserialize_transforms(serialized)
+            assert len(deserialized) == 2
+            assert deserialized[0] == "dummy_1"
+            assert deserialized[1] == "dummy_2"
