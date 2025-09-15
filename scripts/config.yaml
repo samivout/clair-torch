@@ -1,14 +1,17 @@
+# This file is a reference config file for running the scripts in the /scripts directory. These can be adjusted as needed
+# to modify the various run parameters of the code.
 paths:
   image_filetype: ".tif"                # The filetype, which the program should seek for in case of image files.
   image_root: "data/images"             # Input path for the main value images and optional uncertainty images.
-  flatfield_root: "data/flatfields"     # Optional input directory for flatfield images, used for fixed pattern and vignette correction.
-  darkfield_root: "data/darkfields"     # Optional input directory for darkfield images, used for bad pixel filtering.
+  flat_field_root: "data/flatfields"     # Optional input directory for flatfield images, used for fixed pattern and vignette correction.
+  dark_field_root: "data/darkfields"     # Optional input path for a darkfield image, used for bad pixel filtering.
   output_root: "results/torch_output"   # Output directory for the resulting files.
   icrf_path: "data/icrfs/icrf.txt"      # Filepath to the icrf.txt file.
 
 dataset:
   missing_std_mode: "multiplier"        # Determines the handling for missing uncertainty images. multiplier, constant or none
-  missing_std_value: "0.05"             # Value associated with the missing uncertainty handling, e.g. uses this value in constant mode, or multiplies main image with this in multiplier mode.
+  missing_std_value: 0.05             # Value associated with the missing uncertainty handling, e.g. uses this value in constant mode, or multiplies main image with this in multiplier mode.
+  preload_dataset: true             # Whether to preload dataset to memory before use. Copying data from RAM is much faster than reading from disk, but increases memory consumption accordingly.
 
 dataloader:
   batch_size: 4                         # The batch size to use with a dataloader in various functions in this project.
@@ -25,11 +28,13 @@ model:
 training:
   learning_rate: 0.001                  # The learning rate for the Adam optimizers.
   epochs: 1200                          # Epoch limit for training.
-  alpha: 1000                           # coefficient for monotonicity penalty term.
-  beta: 1                               # coefficient for range penalty term.
-  gamma: 1                              # coefficient for endpoint penalty term.
-  delta: 1                              # coefficient for smoothness penalty term.
+  alpha: 10.0                           # coefficient for monotonicity penalty term.
+  beta: 1.0                             # coefficient for range penalty term.
+  gamma: 1.0                            # coefficient for endpoint penalty term.
+  delta: 1.0                            # coefficient for smoothness penalty term.
   patience: 200                         # number of epochs until early stopping when loss does not improve.
   use_relative_linearity_loss: true     # whether to use relative (True) or absolute values (False) for linearity loss computation.
   use_uncertainty_weighting: false      # whether to utilize inverse uncertainty based weights in loss computation.
   device: "cpu"                         # The device on which to train. cpu or cuda if you have NVIDIA GPU with cuda available.
+  one_optimizer_per_channel: true       # Whether to give each channel their own optimizer or to use only one optimizer for all channels collectively.
+  dtype: "float64"                      # The datatype to utilize in tensors.

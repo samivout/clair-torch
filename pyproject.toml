@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=7", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "clair-torch"
+description = "Image correction research framework"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [{ name = "samivout", email = "you@example.com" }]
+dependencies = [
+    "torch",
+    "torchvision",
+    "opencv-python",
+    "matplotlib",
+    "numpy",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pyfakefs",
+    "hypothesis",
+    "hypothesis-torch",
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings-python",
+]
+
+[tool.setuptools_scm]
+write_to = "clair_torch/_version.py"
+version_scheme = "guess-next-dev"
+local_scheme = "node-and-date"

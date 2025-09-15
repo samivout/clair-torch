@@ -1,4 +1,6 @@
-import os
+"""
+Module for utility functions used to validate filepaths.
+"""
 import platform
 from typing import Optional
 from pathlib import Path
@@ -23,12 +25,18 @@ def validate_input_file_path(path: Path, suffix: Optional[str] = None) -> None:
 
 
 def is_potentially_valid_file_path(path: Path) -> bool:
+    """
+    Utility function for checking if a given path, that doesn't necessarily exist, is likely to be valid.
+    Args:
+        path: the filepath to validate.
+
+    Returns:
+        True if path is valid, False if not.
+    """
     try:
-        # Ensure it's not empty and has a name
         if not path or not path.name:
             return False
 
-        # Check for invalid characters depending on OS
         system = platform.system()
 
         if system == "Windows":

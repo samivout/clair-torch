@@ -5,7 +5,7 @@ refactoring before 1.0.0 release.
 import math
 from typing import Optional, Sequence, Any, Iterator, Type
 from itertools import repeat
-from collections.abc import Iterable
+from collections.abc import Iterable, Sized
 import yaml
 import argparse
 
@@ -54,7 +54,7 @@ def check_equal_lengths(*sequences: Optional[Sequence[Any]],
 
 def normalize_container(value: Any, target_type: Type = list, *, convert_if_iterable: bool = False,
                         exclude_types: tuple[type, ...] = (str, bytes, np.ndarray, torch.Tensor),
-                        none_if_all_none: bool = True) -> Iterable | None:
+                        none_if_all_none: bool = True) -> Iterable | Sized | None:
     """
     Normalize a value into a container of the given type.
 
@@ -280,7 +280,7 @@ def get_valid_exposure_pairs(increasing_exposure_values: torch.Tensor, exposure_
 def get_pairwise_valid_pixel_mask(image_value_stack: torch.Tensor, i_idx: torch.Tensor, j_idx: torch.Tensor,
                                   image_std_stack: Optional[torch.Tensor] = None,
                                   val_lower: float = 0.0, val_upper: float = 1.0,
-                                  std_lower: float = 0.0, std_upper: float = 5e-4) -> torch.Tensor:
+                                  std_lower: Optional[float] = None, std_upper: Optional[float] = None) -> torch.Tensor:
     """
     For a batch of images, for all pairs given by indices i_idx and j_idx, compute a pairwise boolean mask by marking
     invalid pixels as False, if they lie outside the valid range defined by lower and upper, in either one of the images
@@ -299,10 +299,13 @@ def get_pairwise_valid_pixel_mask(image_value_stack: torch.Tensor, i_idx: torch.
         A boolean tensor that marks invalid pixel positions in a pair with False, shape (P, C, H, W).
     """
     validate_all((image_value_stack, i_idx, j_idx), torch.Tensor, allow_none_iterable=False, raise_error=True)
-    validate_all((val_lower, val_upper, std_lower, std_upper), float, allow_none_iterable=False, raise_error=True)
+    validate_all((val_lower, val_upper), float, allow_none_iterable=False, raise_error=True)
+    validate_all((std_lower, std_upper), float, allow_none_iterable=False, allow_none_elements=True, raise_error=True)
     if image_std_stack is not None and not isinstance(image_std_stack, torch.Tensor):
         raise TypeError(f"Expected image_std_stack as torch.Tensor, got {type(image_std_stack)}")
-    if val_lower > val_upper or std_lower > std_upper:
+    if val_lower > val_upper:
+        raise ValueError("Lower threshold cannot be a larger value than upper threshold.")
+    if std_lower is not None and std_upper is not None and (std_lower > std_upper):
         raise ValueError("Lower threshold cannot be a larger value than upper threshold.")
 
     # Gather image pairs and reshape to (P, C, H, W)
@@ -310,7 +313,7 @@ def get_pairwise_valid_pixel_mask(image_value_stack: torch.Tensor, i_idx: torch.
 
     valid_mask = (val_i >= val_lower) & (val_i <= val_upper) & (val_j >= val_lower) & (val_j <= val_upper)
 
-    if image_std_stack is not None:
+    if image_std_stack is not None and (std_lower is not None or std_upper is not None):
         std_i, std_j = image_std_stack[i_idx], image_std_stack[j_idx]
         valid_std_mask = (std_i >= std_lower) & (std_i <= std_upper) & (std_j >= std_lower) & (std_j <= std_upper)
         valid_mask = valid_mask & valid_std_mask
@@ -444,30 +447,51 @@ def clamp_along_dims(x: torch.Tensor, dim: int | tuple[int, ...],
     return torch.clamp(x, min=mins, max=maxs)
 
 
-def conditional_gaussian_blur(image: torch.Tensor, mask_map: torch.Tensor, threshold: float, kernel_size: int) -> torch.Tensor:
+def conditional_gaussian_blur(image: torch.Tensor, mask_map: torch.Tensor, threshold: float, kernel_size: int,
+                              differentiable: bool = False, alpha: float = 50.0) -> torch.Tensor:
     """
     Apply a gaussian blur on input image positions at which the given map has value larger than the given threshold.
-    Main purpose is to filter hot pixels from an input image according to a dark calibration image.
+    Optionally use a differentiable soft mask instead of a boolean mask.
+
     Args:
-        image: input image to filter.
-        mask_map: map upon whose values the filtering is based on.
-        threshold: the threshold value to apply filtering on any given position.
+        image: input image of shape (..., C, H, W).
+        mask_map: map for filtering. Shape must be (1, C, H, W) or (N, C, H, W),
+                  where N matches the batch dimension of image or is 1 (broadcasted).
+        threshold: threshold value for filtering.
         kernel_size: size of the gaussian blur kernel.
+        differentiable: if True, use a soft differentiable mask via sigmoid.
+        alpha: steepness of sigmoid when differentiable=True.
 
     Returns:
-        The filtered image.
+        Filtered image, same shape as input.
     """
     *leading, C, H, W = image.shape
-    image_flat = image.reshape(-1, C, H, W)
+    image_flat = image.reshape(-1, C, H, W)  # flatten leading dims into batch
     N = image_flat.size(0)
 
     blur_transform = GaussianBlur(kernel_size=kernel_size, sigma=1.0)
-    blurred = blur_transform(image)
+    blurred = blur_transform(image_flat)
 
-    # boolean mask with stride-0 in the batch dimension: shape (1, C, H, W)
-    mask = (mask_map > threshold).unsqueeze(0)
+    # validate mask shape
+    if mask_map.shape[0] not in (1, N):
+        raise ValueError(
+            f"mask_map batch dimension must be 1 or {N}, "
+            f"got {mask_map.shape[0]}"
+        )
 
-    out = torch.where(mask, blurred, image_flat)
+    if differentiable:
+        # smooth sigmoid mask ∈ (0, 1)
+        mask = torch.sigmoid((mask_map - threshold) * alpha)
+    else:
+        # boolean mask
+        mask = (mask_map > threshold).to(image.dtype)
+
+    # broadcast mask to match image batch if needed
+    if mask.shape[0] == 1 and N > 1:
+        mask = mask.expand(N, -1, -1, -1)
+
+    # mix blurred and original
+    out = mask * blurred + (1 - mask) * image_flat
 
     return out.reshape(*leading, C, H, W)
 

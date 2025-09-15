@@ -3,6 +3,7 @@
 The enums are used to manage clear definitions of different kinds of modes some functions expose.
 """
 
+import torch
 from enum import Enum, auto
 
 
@@ -15,6 +16,20 @@ class InterpMode(Enum):
     CATMULL = auto()
 
 
+class DarkFieldMode(Enum):
+    MAX = auto()
+    INTERPOLATED = auto()
+    CLOSEST = auto()
+    ERROR = auto()
+    SKIP_BATCH = auto()
+
+
+class FlatFieldMode(Enum):
+    CLOSEST = auto()
+    ERROR = auto()
+    SKIP_BATCH = auto()
+
+
 class MissingStdMode(Enum):
     """
     Manages how missing uncertainty images are dealt with in ImageDataset classes.
@@ -22,6 +37,14 @@ class MissingStdMode(Enum):
     NONE = auto()
     CONSTANT = auto()
     MULTIPLIER = auto()
+
+
+class MissingValMode(Enum):
+    """
+    Manages how missing value images are dealt with in ImageDataset classes.
+    """
+    ERROR = auto()
+    SKIP_BATCH = auto()
 
 
 class ChannelOrder(Enum):
@@ -37,4 +60,14 @@ class VarianceMode(Enum):
     POPULATION = auto()
     SAMPLE_FREQUENCY = auto()
     RELIABILITY_WEIGHTS = auto()
+
+
+DTYPE_MAP = {
+    "float16": torch.float16,
+    "float32": torch.float32,
+    "float64": torch.float64,
+    "bfloat16": torch.bfloat16,
+}
+
+REVERSE_DTYPE_MAP = {v: k for k, v in DTYPE_MAP.items()}
 

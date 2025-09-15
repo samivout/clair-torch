@@ -4,7 +4,10 @@ turn.
 """
 from . import common, datasets, inference, metadata, models, training, validation, visualization
 
-__version__ = "0.1.0"
+try:
+    from ._version import version as __version__
+except ImportError:  # Fallback if _version.py doesn't exist yet
+    __version__ = "0.0.0+unknown"
 
 __all__ = [
     "common", "datasets", "inference", "metadata", "models", "training", "validation", "visualization"

@@ -15,10 +15,11 @@ def custom_collate(batch):
 
     """
 
-    sorted_batch = sorted(batch, key=lambda x: x[2]['exposure_time'])
-    val_images, std_images, metas = zip(*sorted_batch)
+    sorted_batch = sorted(batch, key=lambda x: x[3]['exposure_time'])
+    indices, val_images, std_images, metas = zip(*sorted_batch)
 
     # Collate val_images and metas normally.
+    index_batch = default_collate(indices)
     val_batch = default_collate(val_images)
     meta_batch = default_collate(metas)
 
@@ -34,4 +35,4 @@ def custom_collate(batch):
     else:
         std_batch = default_collate(std_images)
 
-    return val_batch, std_batch, meta_batch
+    return index_batch, val_batch, std_batch, meta_batch

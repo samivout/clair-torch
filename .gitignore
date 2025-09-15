@@ -9,3 +9,4 @@
 /inspectionProfiles/Project_Default.xml
 /vcs.xml
 /Pipfile.lock
+/clair_torch/_version.py

@@ -6,7 +6,7 @@ from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 from tqdm import tqdm
 
-from models import ICRFModelBase
+from clair_torch.models.base import ICRFModelBase
 from clair_torch.training.losses import compute_monotonicity_penalty, compute_range_penalty, compute_endpoint_penalty, \
     compute_smoothness_penalty, combined_gaussian_pair_weights, pixelwise_linearity_loss, compute_spatial_linearity_loss
 from clair_torch.visualization.plotting import update_loss_plot
@@ -89,13 +89,10 @@ def train_icrf(
 
         running_loss = torch.zeros(icrf_model.channels, device=icrf_model.icrf.get_device())
 
-        for val_batch, std_batch, meta_batch in tqdm(dataloader, desc=f"Epoch {epoch + 1}/{epochs}", total=batch_size):
+        for index_batch, val_batch, std_batch, meta_batch in tqdm(dataloader, desc=f"Epoch {epoch + 1}/{epochs}", total=batch_size):
 
             images = val_batch.to(device=device)
-            if std_batch is not None:
-                stds = std_batch.to(device=device)
-            else:
-                stds = None
+            stds = std_batch.to(device) if std_batch is not None else None
             exposures = meta_batch['exposure_time'].to(device=device)
 
             # Skip batch if number of images in batch is only one.
@@ -106,7 +103,7 @@ def train_icrf(
             i_idx, j_idx, ratio_pairs = get_valid_exposure_pairs(increasing_exposure_values=exposures,
                                                                  exposure_ratio_threshold=exposure_ratio_threshold)
             valid_mask = get_pairwise_valid_pixel_mask(images, i_idx, j_idx, stds,
-                                                       lower=lower_valid_threshold, upper=upper_valid_threshold)
+                                                       val_lower=lower_valid_threshold, val_upper=upper_valid_threshold)
             gaussian_weight = combined_gaussian_pair_weights(images, i_idx, j_idx)
 
             for optimizer in optimizers:

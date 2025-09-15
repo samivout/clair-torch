@@ -32,7 +32,7 @@ class FakeMetadata(BaseMetadata):
     def get_text_metadata(self) -> dict[str, str | None]:
         return {k: v for k, v in self._values.items() if isinstance(v, str)}
 
-    def is_match(self, other: 'FakeMetadata', attributes) -> bool:
+    def is_match(self, other: 'FakeMetadata', attributes, tolerances=None) -> bool:
         return all(self._values.get(attr) == other._values.get(attr) for attr in attributes)
 
 

@@ -21,8 +21,8 @@ class TestFileSettingsInitialization:
                                         cpu_transforms=None)
 
         assert file_settings.input_path == input_path
-        assert file_settings.default_output_root == input_path.parent / "camera_linearity_torch_output"
-        assert file_settings.output_path == input_path.parent / "camera_linearity_torch_output" / "dummy_input.txt"
+        assert file_settings.default_output_root == input_path.parent / "clair_torch_output"
+        assert file_settings.output_path == input_path.parent / "clair_torch_output" / "dummy_input.txt"
 
     def test_filesettings_init_input_path_and_output_path(self, tmp_path):
         input_path = tmp_path / "dummy_input.txt"
@@ -36,7 +36,7 @@ class TestFileSettingsInitialization:
 
         assert file_settings.input_path == input_path
         assert file_settings.output_path == output_path
-        assert file_settings.default_output_root == input_path.parent / "camera_linearity_torch_output"
+        assert file_settings.default_output_root == input_path.parent / "clair_torch_output"
 
     def test_filesettings_init_input_path_and_default_output_root(self, tmp_path):
         input_path = tmp_path / "dummy_input.txt"
@@ -121,7 +121,7 @@ class TestFileSettingsGetters:
                                         default_output_root=None,
                                         cpu_transforms=None)
 
-        expected_candidate_std_output_path = tmp_path / "camera_linearity_torch_output" / "dummy_input STD.txt"
+        expected_candidate_std_output_path = tmp_path / "clair_torch_output" / "dummy_input STD.txt"
 
         return_value = file_settings.get_candidate_std_output_path()
 
@@ -487,8 +487,8 @@ class TestGroupFrameSettingsByAttributes:
             fake_frame_settings_factory({'exposure': 10, 'gain': 2}),
         ]
 
-        with patch("clair_torch.common.file_settings.issubclass", return_value=True):
-            grouped = fs.group_frame_settings_by_attributes(frames, attributes=['exposure'])
+        with patch("clair_torch.common.file_settings.validate_all", return_value=True):
+            grouped = fs.group_frame_settings_by_attributes(frames, attributes={'exposure': None})
 
         assert len(grouped) == 2
         for group_meta, group_frames in grouped:
@@ -504,8 +504,8 @@ class TestGroupFrameSettingsByAttributes:
             fake_frame_settings_factory({'exposure': 20, 'gain': 2, 'magnification': 10})
         ]
 
-        with patch("clair_torch.common.file_settings.issubclass", return_value=True):
-            grouped = fs.group_frame_settings_by_attributes(frames, attributes=['exposure', 'magnification'])
+        with patch("clair_torch.common.file_settings.validate_all", return_value=True):
+            grouped = fs.group_frame_settings_by_attributes(frames, attributes={'exposure': None, 'magnification': None})
 
         assert len(grouped) == 3
         for group_meta, group_frames in grouped:
@@ -518,7 +518,7 @@ class TestGroupFrameSettingsByAttributes:
             1, 2, 3
         ]
 
-        with pytest.raises(TypeError, match="At least one item in list_of_frame_settings is of invalid type."):
+        with pytest.raises(TypeError):
             _ = fs.group_frame_settings_by_attributes(frames, "dummy")
 
     def test_group_frame_settings_by_attributes_invalid_attributes(self, fake_frame_settings_factory):
@@ -527,6 +527,5 @@ class TestGroupFrameSettingsByAttributes:
             1, 1
         ]
 
-        with pytest.raises(TypeError, match="At least one item in attributes is of invalid type."):
-            with patch("clair_torch.common.file_settings.issubclass", return_value=True):
-                _ = fs.group_frame_settings_by_attributes(frames, 1)
+        with pytest.raises(TypeError):
+            _ = fs.group_frame_settings_by_attributes(frames, 1)

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Sequence, Type
+from typing import Type, Optional
+
+from math import isclose
 
 
 class BaseMetadata(ABC):
@@ -40,20 +42,36 @@ class BaseMetadata(ABC):
         text_dict = self.get_text_metadata()
         return text_dict | numeric_dict
 
-    def is_match(self, other: Type['BaseMetadata'], attributes: Sequence[str]) -> bool:
+    def is_match(self, other: 'BaseMetadata', attributes: dict[str, None | int | float], *,
+                 missing_key_fails: bool = True) -> bool:
         """
         Function for checking if two instances of metadata classes are a match or not based on the given
-        sequence of attributes.
+        mapping of attributes to tolerances.
+
         Args:
             other: an instance of a concrete implementation of a metadata class.
-            attributes: sequence of attributes used to determine if the two instances are a match.
+            attributes: dictionary mapping attribute names to their tolerances.
+                        A None value means an exact match is required.
+            missing_key_fails: whether a missing attribute results in a failed check or not.
 
         Returns:
             True if a match, False if not.
         """
         if not issubclass(type(other), BaseMetadata):
             return False
-        for attr in attributes:
-            if getattr(self, attr, None) != getattr(other, attr, None):
+
+        for attr, tolerance in attributes.items():
+            if attr in self.get_text_metadata():
+                if getattr(self, attr, None) != getattr(other, attr, None):
+                    return False
+
+            elif attr in self.get_numeric_metadata():
+                safe_tolerance = 0.0 if tolerance is None else tolerance
+                if not isclose(getattr(self, attr, None), getattr(other, attr, None), rel_tol=safe_tolerance):
+                    return False
+
+            elif missing_key_fails:
+                # Attribute not present in either text or numeric metadata
                 return False
+
         return True
