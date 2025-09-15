@@ -1,10 +1,11 @@
-"""Module for concrete classes used to manage single input-output files and pairs of input-output files.
-
+"""
+Module for concrete classes used to manage single input-output files and pairs of input-output files.
 """
 
 from pathlib import Path
 from typing import Iterable, Optional, Tuple, List, Sequence, Type, Callable
 
+from clair_torch.validation.type_checks import validate_all
 from clair_torch.metadata.imaging_metadata import ImagingMetadata, BaseMetadata
 from clair_torch.common.transforms import Transform
 from clair_torch.common.base import BaseFileSettings
@@ -143,7 +144,8 @@ class FrameSettings(FileSettings):
         """
         return self.metadata.get_all_metadata()
 
-    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata], attributes: Sequence[str]) -> bool:
+    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata],
+                 attributes: dict[str, Optional[int | float]]) -> bool:
         """
         Method for evaluating whether the metadata contained in a given FramSettings instance or Metadata instance are a
         match based on the given sequence of attributes, which act as keys to the metadata dictionary in a Metadata
@@ -322,7 +324,7 @@ class PairedFrameSettings(PairedFileSettings):
         """
         return self.val_metadata.get_all_metadata()
 
-    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata], attributes: Sequence[str]) -> bool:
+    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata], attributes: dict[str, None | int | float]) -> bool:
         """
         Method for evaluating whether the metadata contained in a given FramSettings instance or Metadata instance are a
         match based on the given sequence of attributes, which act as keys to the metadata dictionary in a Metadata
@@ -427,7 +429,8 @@ def file_settings_constructor(
     return paired_settings, main_settings, std_settings
 
 
-def group_frame_settings_by_attributes(list_of_frame_settings: List[FrameSettings], attributes: Sequence[str])\
+def group_frame_settings_by_attributes(list_of_frame_settings: List[FrameSettings],
+                                       attributes: dict[str, None | int | float]) \
         -> List[Tuple[dict[str, str | float | int], List[FrameSettings]]]:
     """
     Sort FrameSettings objects into separate groups based on the values of the given attributes.
@@ -440,12 +443,8 @@ def group_frame_settings_by_attributes(list_of_frame_settings: List[FrameSetting
         group. The second item in the tuple contains a list of the FrameSettings objects belonging to that group.
     """
 
-    if not all(issubclass(type(item), (FrameSettings, PairedFrameSettings)) for item in list_of_frame_settings):
-        raise TypeError("At least one item in list_of_frame_settings is of invalid type.")
-    if not isinstance(attributes, Iterable):
-        attributes = [attributes]
-    if not all(isinstance(attribute, str) for attribute in attributes):
-        raise TypeError("At least one item in attributes is of invalid type.")
+    validate_all(list_of_frame_settings, (FrameSettings, PairedFrameSettings),
+                 allow_none_elements=False, allow_none_iterable=False, raise_error=True)
 
     list_of_grouped_frame_settings = []
     list_of_group_metas = []
