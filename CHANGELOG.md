@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Added
 
 - CLI scripts as use reference, runnable with a config.yaml file. For example, within your pipenv at project root: 
