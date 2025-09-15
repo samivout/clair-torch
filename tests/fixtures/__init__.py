@@ -14,5 +14,5 @@ __all__ = [
     "mock_metadata_cls",
     "fake_metadata_factory",
     "fake_frame_settings_factory",
-    "device_fixture"
+    "device_fixture",
 ]

@@ -5,7 +5,7 @@ data loading process in functions.
 
 from .base import MultiFileMapDataset, MultiFileIterDataset
 from .collate import custom_collate
-from .image_dataset import ImageMapDataset, ArtefactMapDataset
+from .image_dataset import ImageMapDataset, FlatFieldArtefactMapDataset
 from .video_frame_dataset import VideoIterableDataset
 
 __all__ = [
@@ -13,7 +13,7 @@ __all__ = [
 
     "custom_collate",
 
-    "ImageMapDataset", "ArtefactMapDataset",
+    "ImageMapDataset", "FlatFieldArtefactMapDataset",
 
     "VideoIterableDataset"
 ]
