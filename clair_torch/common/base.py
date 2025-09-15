@@ -6,6 +6,8 @@ from typing import Optional, List, Sequence
 from pathlib import Path
 from abc import ABC, abstractmethod
 
+import torch
+
 from clair_torch.common.transforms import Transform
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
 
@@ -27,7 +29,7 @@ class BaseFileSettings(ABC):
     default_output_root: Path
         a default dirpath to utilize as the directory in which the output file is created upon saving. Based on the
         default_output_root init argument. If None is given, then defaults to a new dirpath called
-        'camera_linearity_torch_output' in the directory of the input file.
+        'clair_torch_output' in the directory of the input file.
     cpu_transforms: Transform | Sequence[Transform] | None
         Optional collection of Transforms that will be performed on the data right after reading it from a file.
     """
@@ -54,7 +56,7 @@ class BaseFileSettings(ABC):
         validate_input_file_path(input_path, None)
         self.input_path = input_path
         if default_output_root is None:
-            self.default_output_root = self.input_path.parent.joinpath("camera_linearity_torch_output")
+            self.default_output_root = self.input_path.parent.joinpath("clair_torch_output")
         else:
             self.default_output_root = default_output_root
 
