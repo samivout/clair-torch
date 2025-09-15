@@ -4,14 +4,11 @@ from pathlib import Path
 import random
 import string
 
-import tempfile
-
 import numpy as np
 import cv2 as cv
 import torch
 
 from clair_torch.common.enums import ChannelOrder
-from clair_torch.common import transforms as tr
 
 
 @pytest.fixture(params=["cpu", "cuda"] if torch.cuda.is_available() else ["cpu"], scope="session")
