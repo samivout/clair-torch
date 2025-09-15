@@ -10,3 +10,4 @@
 /vcs.xml
 /Pipfile.lock
 /clair_torch/_version.py
+*__pycache__
