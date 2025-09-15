@@ -6,6 +6,7 @@ other functions, classes etc. in this project.
 
 from pathlib import Path
 from typing import List, Optional, Iterable, Tuple, Sequence
+import yaml
 
 import torch
 import numpy as np
@@ -303,3 +304,33 @@ def _pair_main_and_std_files(
     std_only = [(None, s) for s in std_files if not strict_exclusive or s not in paired_std]
 
     return paired, main_only, std_only
+
+
+def read_yaml(file_path: Path) -> dict:
+    """
+    Utility function to read the contents of an .yaml file into a dictionary.
+    Args:
+        file_path: path to the .yaml file.
+
+    Returns:
+        Dictionary of the .yaml contents.
+    """
+    validate_input_file_path(file_path, suffix="yaml")
+    with open(file_path) as f:
+        file_content = yaml.safe_load(f)
+
+    return file_content
+
+
+def dump_yaml_to_file(dictionary: dict, target_path: Path) -> None:
+    """
+    Utility function to dump dictionary content to an .yaml file.
+    Args:
+        dictionary: the dictionary to dump.
+        target_path: the filepath to which to save the data.
+    """
+    is_potentially_valid_file_path(target_path)
+    with open(target_path, "w") as f:
+        yaml.safe_dump(dictionary, f)
+
+    return
