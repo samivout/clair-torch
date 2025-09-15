@@ -131,7 +131,7 @@ def get_version() -> str | None:
         ns: dict = {}
         with open(VERSION_FILE, encoding="utf8") as f:
             exec(f.read(), ns)
-        return ns.get("__version__")
+        return ns.get("version")
 
     # fallback to changelog
     with open(CHANGELOG_FILE, encoding="utf8") as f:
