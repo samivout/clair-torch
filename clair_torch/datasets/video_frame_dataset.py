@@ -26,6 +26,7 @@ class VideoIterableDataset(torch.utils.data.IterableDataset):
         self.frame_settings = frame_settings
         self.missing_std_mode = missing_std_mode
         self.shared_std_tensor = torch.tensor(missing_std_value)
+        self._running_index = 0
 
     def __len__(self):
 
@@ -34,7 +35,7 @@ class VideoIterableDataset(torch.utils.data.IterableDataset):
             number_of_frames += frame_setting.get_numeric_metadata()["number_of_frames"]
         return number_of_frames
 
-    def __iter__(self) -> Tuple[torch.Tensor, torch.Tensor | None, dict[str, float | int]]:
+    def __iter__(self) -> Tuple[int, torch.Tensor, torch.Tensor | None, dict[str, float | int]]:
         """
         Access method for the frames of this dataset. Iterates through the files and frames, moving on to the next file
         upon exhausting a file.
@@ -70,4 +71,5 @@ class VideoIterableDataset(torch.utils.data.IterableDataset):
                 else:
                     raise ValueError(f"Unsupported MissingStdMode: {self.missing_std_mode}")
 
-                yield frame, std_image, metadata
+                self._running_index += 1
+                yield self._running_index, frame, std_image, metadata

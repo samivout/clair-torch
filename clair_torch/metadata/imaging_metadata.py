@@ -1,6 +1,8 @@
 from pathlib import Path
 import re
 
+from typeguard import typechecked
+
 from clair_torch.metadata.base import BaseMetadata
 from clair_torch.common.data_io import _get_frame_count
 
@@ -16,6 +18,7 @@ class ImagingMetadata(BaseMetadata):
     3. Illumination type is reserved as 'BF' or 'bf' for bright field and 'DF' or 'df' for dark field.
     4. Subject name will be parsed as the first part that doesn't fit into any of the aforementioned categories.
     """
+    @typechecked
     def __init__(self, val_input_path: str | Path):
         """
         Initialization of a ImagingMetadata instance. Metadata parsing based on the file name.
@@ -84,7 +87,8 @@ class VideoMetadata(ImagingMetadata):
     is the numeric metadata field 'number_of_frames', which is parsed using a function that calls OpenCV to get the
     number of frames.
     """
-    def __init__(self, val_input_path: Path):
+    @typechecked
+    def __init__(self, val_input_path: str | Path):
 
         super().__init__(val_input_path)
         self.number_of_frames = _get_frame_count(val_input_path)

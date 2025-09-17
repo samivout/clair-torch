@@ -1,11 +1,12 @@
 """
 Module for the function that is used to merge a set of images into a single HDR image.
 """
-from typing import Optional, Callable, Sequence, Iterable
+from typing import Optional, Callable, Iterable
 
 from tqdm import tqdm
 import torch
 from torch.utils.data import DataLoader
+from typeguard import typechecked
 
 from clair_torch.common import general_functions as gf, transforms as tr
 from clair_torch.datasets.image_dataset import FlatFieldArtefactMapDataset, DarkFieldArtefactMapDataset, ImageMapDataset
@@ -14,10 +15,11 @@ from clair_torch.training.losses import gaussian_value_weights
 from clair_torch.common.statistics import WBOMean
 
 
+@typechecked
 def compute_hdr_image(dataloader: DataLoader, device: str | torch.device,
                       icrf_model: Optional[ICRFModelBase] = None, weight_fn: Optional[Callable] = None,
                       flat_field_dataset: Optional[FlatFieldArtefactMapDataset] = None,
-                      gpu_transforms: Optional[tr.BaseTransform | Sequence[tr.BaseTransform]] = None,
+                      gpu_transforms: Optional[tr.BaseTransform | Iterable[tr.BaseTransform | None]] = None,
                       dark_field_dataset: Optional[DarkFieldArtefactMapDataset] = None) \
         -> tuple[torch.Tensor, torch.Tensor | None]:
     """
@@ -38,7 +40,9 @@ def compute_hdr_image(dataloader: DataLoader, device: str | torch.device,
         dark_field_dataset: a DarkFieldArtefactMapDataset for dark field correction.
 
     Returns:
-        A tuple of tensors representing (the HDR image, uncertainty of the HDR image or None).
+        A tuple representing
+            - the HDR image (tensor)
+            - uncertainty of the HDR image (tensor or None).
     """
     expected_number_of_iterations = len(dataloader)
     main_dataset: ImageMapDataset = dataloader.dataset

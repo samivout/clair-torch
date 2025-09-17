@@ -5,12 +5,14 @@ from typing import Optional, Sequence, Iterable, Generator
 
 import torch
 from torch.utils.data import DataLoader
+from typeguard import typechecked
 
 from clair_torch.common import general_functions as gf, transforms as tr
 from clair_torch.datasets.image_dataset import FlatFieldArtefactMapDataset, DarkFieldArtefactMapDataset, ImageMapDataset
 from clair_torch.models.base import ICRFModelBase
 
 
+@typechecked
 def linearize_dataset_generator(
         dataloader: DataLoader,
         device: str | torch.device,

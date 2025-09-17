@@ -1,18 +1,23 @@
 """
-Module for collate functionality. Likely subject to refactoring before 1.0.0 release.
+Module for collate functionality. TODO: Likely subject to refactoring before 1.0.0 release.
 """
+import torch
 from torch.utils.data._utils.collate import default_collate
 
 
-def custom_collate(batch):
+def custom_collate(batch) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor | None, dict[str, torch.Tensor]]:
     """
     Custom collate function for handling possible None std images. If any Nones are found in the batch, the whole
     batch is set to None.
     Args:
-        batch:
+        batch: the data batch from a Dataset as a tuple. Expects tuple of four items, similar to the return value.
 
     Returns:
-
+        Batched data in a tuple
+        - Index tensor containing the indices that were utilized from the dataset
+        - Image tensor
+        - Possible uncertainty image tensor.
+        - Dictionary of metadata keys (str) and numeric values (torch.Tensor).
     """
 
     sorted_batch = sorted(batch, key=lambda x: x[3]['exposure_time'])

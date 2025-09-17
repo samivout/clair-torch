@@ -6,12 +6,14 @@ from typing import Optional
 from tqdm import tqdm
 import torch
 from torch.utils.data import DataLoader
+from typeguard import typechecked
 
 from clair_torch.training.losses import combined_gaussian_pair_weights, pixelwise_linearity_loss, compute_spatial_linearity_loss
 from clair_torch.common.general_functions import get_valid_exposure_pairs, get_pairwise_valid_pixel_mask
 from clair_torch.models.base import ICRFModelBase
 
 
+@typechecked
 def measure_linearity(dataloader: DataLoader, device: str | torch.device,
                       use_uncertainty_weighting: bool = True, use_relative_linearity_loss: bool = True,
                       icrf_model: Optional[ICRFModelBase] = None) \

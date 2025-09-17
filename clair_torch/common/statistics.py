@@ -3,7 +3,9 @@ Module for classes that can be used to easily compute mean and variance values o
 i.e. in one pass of the dataset.
 """
 from typing import Optional
+
 import torch
+from typeguard import typechecked
 
 from clair_torch.common.enums import VarianceMode
 from clair_torch.validation.type_checks import validate_all
@@ -11,6 +13,7 @@ from clair_torch.validation.type_checks import validate_all
 
 class WBOMean(object):
 
+    @typechecked
     def __init__(self, dim: int | tuple[int, ...] = 0):
         """
         Weighted batched online mean (WBOMean). Allows the computation of a weighted mean value of a dataset in a single
@@ -60,6 +63,7 @@ class WBOMean(object):
             else:
                 self._sum_of_weights = self._sum_of_weights.detach()
 
+    @typechecked
     def update_values(self, batch_values: torch.Tensor, batch_weights: Optional[torch.Tensor] = None) -> torch.Tensor:
         """
         The public method for updating the weighted mean value. Returns the new mean on update.
@@ -110,6 +114,7 @@ class WBOMean(object):
 
 class WBOMeanVar(WBOMean):
 
+    @typechecked
     def __init__(self, dim: int | tuple[int, ...] = 0, variance_mode: VarianceMode = VarianceMode.RELIABILITY_WEIGHTS):
         """
         Weighted batched online mean and variance. Allows the computation of a weighted mean and variance of a dataset in a
@@ -197,6 +202,7 @@ class WBOMeanVar(WBOMean):
             else:
                 self._sum_of_squared_weights = self._sum_of_squared_weights.detach_()
 
+    @typechecked
     def update_values(self, batch_values: torch.Tensor, batch_weights: Optional[torch.Tensor] = None) -> \
             tuple[float | torch.Tensor, float | torch.Tensor]:
         """

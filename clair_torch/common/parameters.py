@@ -1,7 +1,13 @@
+"""
+Module for Parameters classes, which are utilized for easy management of various parameters in the different functions
+of clair-torch.
+"""
 from pathlib import Path
 from enum import Enum
 from torch import dtype
 from typing import Optional, Any
+
+from typeguard import typechecked
 
 from clair_torch.common.data_io import dump_yaml_to_file
 from clair_torch.common.transforms import BaseTransform, deserialize_transforms, serialize_transforms
@@ -9,6 +15,7 @@ from clair_torch.common.enums import MissingStdMode, InterpMode, DTYPE_MAP, REVE
 
 
 class Parameters:
+    @typechecked
     def __init__(self, config: dict[str, Any], strict: bool = True):
 
         self.strict = strict
