@@ -17,7 +17,6 @@ from clair_torch.common.transforms import Transform
 from clair_torch.common.general_functions import cv_to_torch, normalize_container
 from clair_torch.common.enums import ChannelOrder
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
-from clair_torch.validation.type_checks import validate_all
 
 
 @typechecked
@@ -121,7 +120,6 @@ def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[
     validate_input_file_path(file_path, suffix=None)
 
     transforms = normalize_container(transforms)
-    validate_all(transforms, Transform, raise_error=True, name="transform")
 
     try:
         image = cv.imread(str(file_path), cv.IMREAD_UNCHANGED)
@@ -152,7 +150,6 @@ def load_video_frames_generator(file_path: str | Path, transforms: Optional[Tran
     validate_input_file_path(file_path, suffix=None)
 
     transforms = normalize_container(transforms)
-    validate_all(transforms, Transform, raise_error=True, name="transform")
 
     cap = cv.VideoCapture(str(file_path))
     success, frame = cap.read()

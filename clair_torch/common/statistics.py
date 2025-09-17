@@ -8,7 +8,6 @@ import torch
 from typeguard import typechecked
 
 from clair_torch.common.enums import VarianceMode
-from clair_torch.validation.type_checks import validate_all
 
 
 class WBOMean(object):
@@ -24,8 +23,6 @@ class WBOMean(object):
         """
         if isinstance(dim, int):
             dim = (dim,)
-        elif isinstance(dim, tuple):
-            validate_all(dim, int, raise_error=True, allow_none_iterable=False)
         else:
             raise TypeError(f"Expected dim as int or tuple of int, got {type(dim)}")
 

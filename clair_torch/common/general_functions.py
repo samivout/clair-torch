@@ -14,7 +14,7 @@ import torch
 import numpy as np
 from torchvision.transforms import GaussianBlur
 
-from clair_torch.validation.type_checks import validate_all, is_broadcastable
+from clair_torch.validation.type_checks import is_broadcastable
 
 
 def check_equal_lengths(*sequences: Optional[Sequence[Any]],
@@ -405,9 +405,6 @@ def clamp_along_dims(x: torch.Tensor, dim: int | tuple[int, ...],
     """
     if isinstance(dim, int):
         dim = (dim,)
-
-    validate_all([x], torch.Tensor, raise_error=True, allow_none_elements=False, allow_none_iterable=False)
-    validate_all(dim, int, raise_error=True, allow_none_elements=False, allow_none_iterable=False)
 
     dim = tuple(d % x.ndim for d in dim)  # handle negative dims
 
