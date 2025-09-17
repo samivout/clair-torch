@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- Introduced `Typeguard` for runtime type validation, which can be configureg on/off via environment variables.
+
+### Fixed
+
+- Broken batch loop in `inferential_statistics.py`
+
+### Changed
+
+- References to `.validation.type_checks.validate_all` removed in favor of `Typeguard` decorator checks.
+
 ## [0.2.0]
 
 ### Added
