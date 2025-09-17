@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 from pathlib import Path
 
+from typeguard import TypeCheckError
 import numpy as np
 import torch
 
@@ -38,12 +39,10 @@ class TestLoadIcrfTxt:
 
     @pytest.mark.parametrize("temp_icrf_txt_file", [np.random.rand(256, 3)], indirect=True)
     def test_load_icrf_txt_invalid_channel_order(self, temp_icrf_txt_file):
-        class FakeOrder:
-            pass
 
-        source_channel_order = FakeOrder()
+        source_channel_order = "invalid channel order"
 
-        with pytest.raises(ValueError, match=f"Unknown channel order {source_channel_order}:"):
+        with pytest.raises(TypeCheckError):
             io.load_icrf_txt(temp_icrf_txt_file, source_channel_order=source_channel_order)
 
     @pytest.mark.parametrize("temp_icrf_txt_file", [np.tile([0.1, 0.2, 0.3], (256, 1)).astype(np.float32)], indirect=True)
@@ -159,26 +158,26 @@ class TestSaveImage:
     def test_save_image_invalid_image(self, tmp_path):
         image_save_path = tmp_path / "image.tif"
         bad_dummy_image = "this is bad"
-        with pytest.raises(TypeError, match=f"Expected a torch.Tensor, got {type(bad_dummy_image).__name__}"):
+        with pytest.raises(TypeCheckError):
             io.save_image(bad_dummy_image, image_save_path)
 
     def test_save_image_invalid_path(self):
         bad_dummy_path = 1
         dummy_image = torch.ones((5, 5), dtype=torch.uint8)
-        with pytest.raises(TypeError, match=f"Expected path as str or Path, got {type(bad_dummy_path).__name__}"):
+        with pytest.raises(TypeCheckError):
             io.save_image(dummy_image, bad_dummy_path)
 
     def test_save_image_bad_windows_path(self, tmp_path):
         bad_windows_path = tmp_path / ":_image.tif"
         dummy_image = torch.ones((5, 5), dtype=torch.uint8)
-        with pytest.raises(IOError, match=re.escape(f"Invalid path for your OS: {bad_windows_path}")):
+        with pytest.raises(IOError):
             io.save_image(dummy_image, bad_windows_path)
 
     def test_save_image_bad_opencv_parameters(self, tmp_path):
         image_save_path = tmp_path / "image.tif"
         dummy_image = torch.ones((5, 5), dtype=torch.uint8)
         params = ["this is bad"]
-        with pytest.raises(TypeError, match="All OpenCV imwrite params must be integers"):
+        with pytest.raises(TypeCheckError):
             io.save_image(dummy_image, image_save_path, params=params)
 
     @pytest.mark.parametrize(
@@ -198,13 +197,13 @@ class TestSaveIcrfTxt:
         bad_tensor = "this is bad"
         save_path = tmp_path / "icrf.txt"
 
-        with pytest.raises(TypeError, match=f"Expected torch.Tensor, got {type(bad_tensor).__name__}"):
+        with pytest.raises(TypeCheckError):
             io.save_icrf_txt(bad_tensor, save_path)
 
     def test_save_icrf_txt_invalid_path(self):
         icrf = torch.ones(256, 3)
         save_path = 111
-        with pytest.raises(TypeError, match=f"Expected str or Path, got {type(save_path).__name__}"):
+        with pytest.raises(TypeCheckError):
             io.save_icrf_txt(icrf, save_path)
 
     def test_save_icrf_txt_roundtrip(self, tmp_path):
@@ -217,7 +216,7 @@ class TestSaveIcrfTxt:
         assert torch.allclose(icrf, loaded_icrf)
 
 
-class TestGetFileInputPathsByType:
+class TestGetFileInputPathsByPattern:
 
     @pytest.mark.parametrize("path_type", [str, Path])
     def test_get_file_paths_recursive(self, generate_temp_file_tree, path_type):
@@ -233,11 +232,11 @@ class TestGetFileInputPathsByType:
         assert len(result) == 1
 
     def test_get_file_paths_invalid_type(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             io._get_file_input_paths_by_pattern(123, "*.tif")
 
     def test_get_file_input_paths_by_type_invalid_pattern(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             io._get_file_input_paths_by_pattern("/dummy_path", 123)
 
 
@@ -284,8 +283,10 @@ class TestLoadVideoFramesGenerator:
             (False, None)  # End of video
         ]
 
-        with (patch.object(clair_torch.common.data_io.cv, clair_torch.common.data_io.cv.VideoCapture.__name__, return_value=mock_cap),
-              patch.object(clair_torch.common.data_io, clair_torch.common.data_io.validate_input_file_path.__name__)):
+        video_capture_patch = patch.object(clair_torch.common.data_io.cv, clair_torch.common.data_io.cv.VideoCapture.__name__, return_value=mock_cap)
+        validate_input_file_patch = patch.object(clair_torch.common.data_io, clair_torch.common.data_io.validate_input_file_path.__name__)
+
+        with (video_capture_patch, validate_input_file_patch):
 
             frames = list(io.load_video_frames_generator(tmp_path, transforms=None))
 

@@ -2,7 +2,9 @@ import pytest
 from unittest.mock import patch
 
 import torch
+from typeguard import TypeCheckError
 
+import clair_torch.common.transforms
 import clair_torch.common.transforms as tr
 
 
@@ -55,7 +57,7 @@ class TestStridedDownScale:
         bad_type = "this is bad"
         too_small = -1
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             _ = tr.StridedDownscale(bad_type)
         with pytest.raises(ValueError):
             _ = tr.StridedDownscale(too_small)
@@ -134,7 +136,8 @@ class TestNormalize:
 
         input_tensor = torch.ones((2, 2))
 
-        with patch("clair_torch.common.transforms.normalize_tensor") as mock:
+        normalize_tensor_patch = patch.object(clair_torch.common.transforms, clair_torch.common.transforms.normalize_tensor.__name__)
+        with normalize_tensor_patch as mock:
 
             normalize = tr.Normalize(min_val=0.0, max_val=1.0)
             _ = normalize(input_tensor)
@@ -146,7 +149,7 @@ class TestNormalize:
     def test_normalize_config_roundtrip(self):
 
         transform = tr.Normalize(min_val=None, max_val=None, target_range=(0.0, 1.0))
-        expected = {"min_val": None, "max_val": None, "target_range": [0.0, 1.0]}
+        expected = {"min_val": None, "max_val": None, "target_range": (0.0, 1.0)}
 
         assert transform.to_config() == expected
 
@@ -165,7 +168,8 @@ class TestClampAlongDims:
         min_max_pairs = (0, 1)
         x = torch.ones((2, 2))
 
-        with patch("clair_torch.common.transforms.clamp_along_dims") as mock:
+        clamp_patch = patch.object(clair_torch.common.transforms, clair_torch.common.transforms.clamp_along_dims.__name__)
+        with clamp_patch as mock:
 
             transform = tr.ClampAlongDims(dim, min_max_pairs)
             _ = transform(x)
@@ -195,8 +199,14 @@ class TestSerializeTransforms:
 
         expected = [{'params': 'dummy', 'type': 'Normalize'}, {'params': 'dummy', 'type': 'CvToTorch'}]
 
-        with (patch("clair_torch.common.transforms.Normalize.to_config", return_value="dummy"),
-              patch("clair_torch.common.transforms.CvToTorch.to_config", return_value="dummy")):
+        normalize_to_config_patch = patch.object(clair_torch.common.transforms.Normalize,
+                                                 clair_torch.common.transforms.Normalize.to_config.__name__,
+                                                 return_value="dummy")
+        cv_to_torch_to_config_patch = patch.object(clair_torch.common.transforms.CvToTorch,
+                                                   clair_torch.common.transforms.CvToTorch.to_config.__name__,
+                                                   return_value="dummy")
+
+        with (normalize_to_config_patch, cv_to_torch_to_config_patch):
 
             transform_1 = tr.Normalize()
             transform_2 = tr.CvToTorch()
@@ -212,8 +222,14 @@ class TestDeserializeTransforms:
 
         serialized = [{'params': 'dummy', 'type': 'Normalize'}, {'params': 'dummy', 'type': 'CvToTorch'}]
 
-        with (patch("clair_torch.common.transforms.Normalize.from_config", return_value="dummy_1"),
-              patch("clair_torch.common.transforms.CvToTorch.from_config", return_value="dummy_2")):
+        normalize_from_config_patch = patch.object(clair_torch.common.transforms.Normalize,
+                                                   clair_torch.common.transforms.Normalize.from_config.__name__,
+                                                   return_value="dummy_1")
+        cv_to_torch_from_config_patch = patch.object(clair_torch.common.transforms.CvToTorch,
+                                                     clair_torch.common.transforms.CvToTorch.from_config.__name__,
+                                                     return_value="dummy_2")
+
+        with (normalize_from_config_patch, cv_to_torch_from_config_patch):
 
             deserialized = tr.deserialize_transforms(serialized)
             assert len(deserialized) == 2

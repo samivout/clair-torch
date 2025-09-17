@@ -2,6 +2,7 @@ import pytest
 from hypothesis import given, strategies as st
 from hypothesis_torch import tensor_strategy
 
+from typeguard import TypeCheckError
 import numpy as np
 import torch
 
@@ -211,7 +212,7 @@ class TestFlatFieldMean:
 
         flat_field = "this is bad"
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             gf.flat_field_mean(flat_field, 0.5)
 
     def test_flat_field_mean_invalid_mid_area_side_fraction(self):
@@ -219,7 +220,7 @@ class TestFlatFieldMean:
         flat_field = torch.ones((10, 10))
         mid_area_side_fraction = "more bad"
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             gf.flat_field_mean(flat_field, mid_area_side_fraction)
 
     def test_flat_field_mean_mid_area_side_fraction_value_error(self):
@@ -241,7 +242,7 @@ class TestFlatFieldCorrection:
     ])
     def test_flat_field_correction_invalid_args(self, images, flatfield, flatfield_mean_val, epsilon):
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             gf.flatfield_correction(images, flatfield, flatfield_mean_val, epsilon)
 
     def test_flat_field_correction_finite_gradients(self):
@@ -322,7 +323,7 @@ class TestGetValidExposurePairs:
     ])
     def test_get_valid_exposure_pairs_invalid_args(self, increasing_exposure_values, exposure_ratio_threshold):
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             gf.get_valid_exposure_pairs(increasing_exposure_values, exposure_ratio_threshold)
 
 

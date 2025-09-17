@@ -1,8 +1,10 @@
 import pytest
 from unittest.mock import MagicMock, create_autospec, patch, ANY
 
+from typeguard import TypeCheckError, suppress_type_checks
 import numpy as np
 
+import clair_torch.common.file_settings
 from clair_torch.common import file_settings as fs
 from clair_torch.metadata.base import BaseMetadata
 
@@ -90,7 +92,7 @@ class TestFileSettingsInitialization:
     def test_filesettings_init_bad_input_path(self):
         input_path = 111
 
-        with pytest.raises(TypeError, match=f"Expected path as str or Path, got {type(input_path).__name__}"):
+        with pytest.raises(TypeCheckError):
             file_settings = fs.FileSettings(input_path=input_path)
 
     def test_filesettings_init_bad_output_path(self, tmp_path):
@@ -98,7 +100,7 @@ class TestFileSettingsInitialization:
         np.savetxt(input_path, np.zeros((2, 2)))
         output_path = 111
 
-        with pytest.raises(TypeError, match=f"Expected path as str or Path, got {type(output_path).__name__}"):
+        with pytest.raises(TypeCheckError):
             file_settings = fs.FileSettings(input_path=input_path, output_path=output_path)
 
     def test_filesettings_init_bad_default_output_root(self, tmp_path):
@@ -106,7 +108,7 @@ class TestFileSettingsInitialization:
         np.savetxt(input_path, np.zeros((2, 2)))
         default_output_root = 111
 
-        with pytest.raises(TypeError, match=f"Expected path as str or Path, got {type(default_output_root).__name__}"):
+        with pytest.raises(TypeCheckError):
             file_settings = fs.FileSettings(input_path=input_path, output_path=None,
                                             default_output_root=default_output_root)
 
@@ -151,7 +153,7 @@ class TestFrameSettings:
     def test_frame_settings_metadata_getters(self, numpy_array, temp_image_file):
         img_path = temp_image_file(numpy_array)
 
-        dummy_attributes = ["ree", "wee"]
+        dummy_attributes = {"ree": 5, "wee": None}
         # Create a mock metadata instance and configure its methods
         mock_metadata_instance = MagicMock()
         mock_reference = create_autospec(BaseMetadata, instance=True)
@@ -163,12 +165,10 @@ class TestFrameSettings:
         # Create a mock class that returns the instance when called
         mock_metadata_cls = MagicMock(return_value=mock_metadata_instance)
 
-        # Pass the mock class into FrameSettings
-        with patch('clair_torch.common.file_settings.issubclass', return_value=True):
-            frame_settings = fs.FrameSettings(input_path=img_path,
-                                              output_path=None,
-                                              default_output_root=None,
-                                              metadata_cls=mock_metadata_cls)
+        frame_settings = fs.FrameSettings(input_path=img_path,
+                                          output_path=None,
+                                          default_output_root=None,
+                                          metadata_cls=mock_metadata_cls)
 
         _ = frame_settings.get_numeric_metadata()
         _ = frame_settings.get_text_metadata()
@@ -331,7 +331,7 @@ class TestPairedFrameSettings:
         val_input_path = temp_image_file(name="val_img.tif")
         std_input_path = temp_image_file(name="this STD.tif")
 
-        dummy_attributes = ["ree", "wee"]
+        dummy_attributes = {"ree": 5, "wee": None}
         # Create a mock metadata instance and configure its methods
         mock_metadata_instance = MagicMock()
         mock_reference = create_autospec(BaseMetadata, instance=True)
@@ -343,11 +343,9 @@ class TestPairedFrameSettings:
         # Create a mock class that returns the instance when called
         mock_metadata_cls = MagicMock(return_value=mock_metadata_instance)
 
-        # Pass the mock class into FrameSettings
-        with patch('clair_torch.common.file_settings.issubclass', return_value=True):
-            frame_settings = fs.PairedFrameSettings(val_input_path=val_input_path,
-                                                    std_input_path=std_input_path,
-                                                    metadata_cls=mock_metadata_cls)
+        frame_settings = fs.PairedFrameSettings(val_input_path=val_input_path,
+                                                std_input_path=std_input_path,
+                                                metadata_cls=mock_metadata_cls)
 
         _ = frame_settings.get_numeric_metadata()
         _ = frame_settings.get_text_metadata()
@@ -372,11 +370,10 @@ class TestPairedFrameSettings:
 
         mock_metadata_cls = MagicMock(return_value=mock_metadata)
 
-        with patch('clair_torch.common.file_settings.issubclass', return_value=True):
-            paired_frame_settings = fs.PairedFrameSettings(val_input_path=val_input_path,
-                                                           std_input_path=std_input_path,
-                                                           metadata_cls=mock_metadata_cls,
-                                                           parse_std_meta=True)
+        paired_frame_settings = fs.PairedFrameSettings(val_input_path=val_input_path,
+                                                       std_input_path=std_input_path,
+                                                       metadata_cls=mock_metadata_cls,
+                                                       parse_std_meta=True)
 
         assert paired_frame_settings.std_metadata is not None
         mock_metadata_cls.assert_called_with(std_input_path)
@@ -388,11 +385,18 @@ class TestFileSettingsConstructor:
         paths = generate_temp_paired_files(num_paired=2, num_main=1, num_std=1, write_file=False)
         root_dir = paths[0].parent
 
-        with patch("clair_torch.common.file_settings.FrameSettings") as MockFrame, \
-                patch("clair_torch.common.file_settings.FileSettings") as MockFile, \
-                patch("clair_torch.common.file_settings.PairedFrameSettings") as MockPairedFrame, \
-                patch("clair_torch.common.file_settings.PairedFileSettings") as MockPairedFile, \
-                patch("clair_torch.common.file_settings._get_file_input_paths_by_pattern", return_value=paths):
+        frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FrameSettings.__name__)
+        file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FileSettings.__name__)
+        paired_frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFrameSettings.__name__)
+        paired_file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFileSettings.__name__)
+        file_getter_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings._get_file_input_paths_by_pattern.__name__, return_value=paths)
+
+        with (frame_settings_patch as MockFrame,
+              file_settings_patch as MockFile,
+              paired_frame_settings_patch as MockPairedFrame,
+              paired_file_settings_patch as MockPairedFile,
+              file_getter_patch):
+
             mock_return_val = MagicMock()
             MockFrame.return_value = mock_return_val
             MockFile.return_value = mock_return_val
@@ -414,11 +418,18 @@ class TestFileSettingsConstructor:
         mock_metadata = MagicMock()
         mock_metadata_cls = MagicMock(return_value=mock_metadata)
 
-        with patch("clair_torch.common.file_settings.FrameSettings") as MockFrame, \
-                patch("clair_torch.common.file_settings.FileSettings") as MockFile, \
-                patch("clair_torch.common.file_settings.PairedFrameSettings") as MockPairedFrame, \
-                patch("clair_torch.common.file_settings.PairedFileSettings") as MockPairedFile, \
-                patch("clair_torch.common.file_settings._get_file_input_paths_by_pattern", return_value=paths):
+        frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FrameSettings.__name__)
+        file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FileSettings.__name__)
+        paired_frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFrameSettings.__name__)
+        paired_file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFileSettings.__name__)
+        file_getter_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings._get_file_input_paths_by_pattern.__name__, return_value=paths)
+
+        with (frame_settings_patch as MockFrame,
+              file_settings_patch as MockFile,
+              paired_frame_settings_patch as MockPairedFrame,
+              paired_file_settings_patch as MockPairedFile,
+              file_getter_patch):
+
             mock_return_val = MagicMock()
             MockFrame.return_value = mock_return_val
             MockFile.return_value = mock_return_val
@@ -445,12 +456,19 @@ class TestFileSettingsConstructor:
         file_pattern = "*.tif"
         recursive = False
         dummy_out_root = paths[0].parent / "dummy_out_root"
-        with patch("clair_torch.common.file_settings.FrameSettings") as MockFrame, \
-                patch("clair_torch.common.file_settings.FileSettings") as MockFile, \
-                patch("clair_torch.common.file_settings.PairedFrameSettings") as MockPairedFrame, \
-                patch("clair_torch.common.file_settings.PairedFileSettings") as MockPairedFile, \
-                patch("clair_torch.common.file_settings._get_file_input_paths_by_pattern",
-                      return_value=paths) as mock_file_getter:
+
+        frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FrameSettings.__name__)
+        file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.FileSettings.__name__)
+        paired_frame_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFrameSettings.__name__)
+        paired_file_settings_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings.PairedFileSettings.__name__)
+        file_getter_patch = patch.object(clair_torch.common.file_settings, clair_torch.common.file_settings._get_file_input_paths_by_pattern.__name__, return_value=paths)
+
+        with (frame_settings_patch as MockFrame,
+              file_settings_patch as MockFile,
+              paired_frame_settings_patch as MockPairedFrame,
+              paired_file_settings_patch as MockPairedFile,
+              file_getter_patch as mock_file_getter):
+
             mock_return_val = MagicMock()
             MockFrame.return_value = mock_return_val
             MockFile.return_value = mock_return_val
@@ -487,7 +505,7 @@ class TestGroupFrameSettingsByAttributes:
             fake_frame_settings_factory({'exposure': 10, 'gain': 2}),
         ]
 
-        with patch("clair_torch.common.file_settings.validate_all", return_value=True):
+        with suppress_type_checks():
             grouped = fs.group_frame_settings_by_attributes(frames, attributes={'exposure': None})
 
         assert len(grouped) == 2
@@ -504,7 +522,7 @@ class TestGroupFrameSettingsByAttributes:
             fake_frame_settings_factory({'exposure': 20, 'gain': 2, 'magnification': 10})
         ]
 
-        with patch("clair_torch.common.file_settings.validate_all", return_value=True):
+        with suppress_type_checks():
             grouped = fs.group_frame_settings_by_attributes(frames, attributes={'exposure': None, 'magnification': None})
 
         assert len(grouped) == 3
@@ -518,7 +536,7 @@ class TestGroupFrameSettingsByAttributes:
             1, 2, 3
         ]
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             _ = fs.group_frame_settings_by_attributes(frames, "dummy")
 
     def test_group_frame_settings_by_attributes_invalid_attributes(self, fake_frame_settings_factory):
@@ -527,5 +545,5 @@ class TestGroupFrameSettingsByAttributes:
             1, 1
         ]
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             _ = fs.group_frame_settings_by_attributes(frames, 1)

@@ -2,6 +2,7 @@ import pytest
 
 import random
 
+from typeguard import TypeCheckError
 import torch
 
 from clair_torch.common.enums import VarianceMode
@@ -20,11 +21,11 @@ class TestWBOMean:
         assert mean_manager.mean == 0.0
         assert mean_manager.sum_of_weights == 0.0
 
-    def test_WBOMean_init_fail(self):
+    def test_WBOMean_init_invalid_argument(self):
 
         dim = "bad"
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             _ = st.WBOMean(dim=dim)
 
     def test_WBOMean_vs_simple_mean(self):
@@ -91,7 +92,7 @@ class TestWBOMeanVar:
     def test_WBOMeanVar_init_fail(self):
         dim = "bad"
 
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeCheckError):
             _ = st.WBOMeanVar(dim=dim)
 
     @pytest.mark.parametrize("variance_mode",

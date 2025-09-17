@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import MagicMock, patch
 
 import torch
+from typeguard import suppress_type_checks
 
 import clair_torch.datasets.base
 from clair_torch.datasets import image_dataset as id
@@ -27,9 +28,7 @@ class TestImageMapDataset:
 
         mock_file_settings = tuple(mock_file_settings)
 
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
-        with validate_patch:
+        with suppress_type_checks():
             image_dataset = id.ImageMapDataset(
                 files=mock_file_settings, copy_preloaded_data=True, missing_std_mode=MissingStdMode.NONE,
                 missing_std_value=0.0, default_get_item_key="raw", missing_val_mode=MissingValMode.ERROR
@@ -64,10 +63,7 @@ class TestImageMapDataset:
         fake_frame_settings = fake_frame_settings_factory({"exposure_time": 1.0}, tmp_path / "file1.tif", None,
                                                           MagicMock())
 
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
-
-        with validate_patch:
+        with suppress_type_checks():
             image_dataset = id.ImageMapDataset((fake_frame_settings,), copy_preloaded_data=True,
                                                missing_std_mode=std_mode, missing_std_value=1.0,
                                                default_get_item_key="raw", missing_val_mode=MissingValMode.ERROR)
@@ -91,10 +87,7 @@ class TestImageMapDataset:
         fake_frame_settings_2 = fake_frame_settings_factory({"exposure_time": 2.0}, tmp_path / "file2.tif",
                                                             tmp_path / "file2_std.tif", MagicMock())
 
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
-
-        with validate_patch:
+        with suppress_type_checks():
             image_dataset = id.ImageMapDataset((fake_frame_settings_1, fake_frame_settings_2),
                                                copy_preloaded_data=copy_preloaded_data,
                                                missing_val_mode=MissingValMode.ERROR,
@@ -143,10 +136,7 @@ class TestFlatFieldArtefactMapDataset:
 
         return_tensor = torch.ones((2, 2))
 
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
-
-        with validate_patch:
+        with suppress_type_checks():
             artefact_dataset = id.FlatFieldArtefactMapDataset((artefact_fake_frame_settings,), True)
 
         # Define patches for other functions / methods.
@@ -176,9 +166,7 @@ class TestFlatFieldArtefactMapDataset:
                                                                    tmp_path / "file2.tif",
                                                                    tmp_path / "file2_std.tif", MagicMock())
 
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
-        with validate_patch:
+        with suppress_type_checks():
             artefact_dataset = id.FlatFieldArtefactMapDataset((artefact_fake_frame_settings,), True,
                                                               missing_val_mode=missing_val_mode)
 
@@ -186,7 +174,7 @@ class TestFlatFieldArtefactMapDataset:
                                                         clair_torch.datasets.base.MultiFileArtefactMapDataset._get_matching_artefact_image.__name__,
                                                         return_value=None)
 
-        with (get_matcing_artefact_image_patch, validate_patch):
+        with (get_matcing_artefact_image_patch, suppress_type_checks()):
 
             if missing_val_mode == MissingValMode.ERROR:
                 with pytest.raises(RuntimeError):
@@ -211,10 +199,8 @@ class TestFlatFieldArtefactMapDataset:
         artefact_fake_frame_settings = fake_frame_settings_factory({"exposure_time": 3.0, "magnification": 5.0},
                                                                    tmp_path / "file2.tif",
                                                                    tmp_path / "file2_std.tif", MagicMock())
-        validate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.validate_all.__name__,
-                                      return_value=True)
 
-        with validate_patch:
+        with suppress_type_checks():
             artefact_dataset = id.FlatFieldArtefactMapDataset((artefact_fake_frame_settings,), True,
                                                               missing_val_mode=MissingValMode.ERROR)
 
@@ -224,7 +210,7 @@ class TestFlatFieldArtefactMapDataset:
         collate_patch = patch.object(clair_torch.datasets.base, clair_torch.datasets.base.custom_collate.__name__,
                                      return_value="dummy 1")
 
-        with (get_matcing_artefact_image_patch, collate_patch, validate_patch):
+        with (get_matcing_artefact_image_patch, collate_patch, suppress_type_checks()):
 
             ret = artefact_dataset.get_matching_artefact_images([main_fake_frame_settings])
 
