@@ -1,15 +1,15 @@
 """
 Module for the base classes of the datasets subpackage.
 """
-from typing import TypeVar, List
+from typing import List
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import OrderedDict
 
 import torch
 from torch.utils.data import Dataset, IterableDataset
+from typeguard import typechecked
 
-from clair_torch.validation.type_checks import validate_all
 from clair_torch.common.enums import MissingStdMode, MissingValMode
 from clair_torch.common.mixins import Clearable
 from clair_torch.common.file_settings import FrameSettings, PairedFrameSettings
@@ -17,26 +17,15 @@ from clair_torch.common.data_io import load_image
 from clair_torch.datasets.collate import custom_collate
 
 
-T_File = TypeVar("T_File", bound=FrameSettings)
-
-
-class MultiFileMapDataset(Dataset[T_File], ABC):
+class MultiFileMapDataset(Dataset, ABC):
     """
     A generic base class for map-style Dataset classes. Dataset classes must manage files via a concrete implementation
     of the generic base FileSettings class.
     """
-    def __init__(self, files: tuple[T_File], copy_preloaded_data: bool = True,
+    @typechecked
+    def __init__(self, files: tuple[FrameSettings | PairedFrameSettings, ...], copy_preloaded_data: bool = True,
                  missing_std_mode: MissingStdMode = MissingStdMode.CONSTANT, missing_std_value: float = 0.0,
-                 default_getitem_key="raw", missing_val_mode: MissingValMode = MissingValMode.ERROR):
-
-        validate_all(files, (FrameSettings, PairedFrameSettings), allow_none_iterable=False, allow_none_elements=False,
-                     raise_error=True)
-        validate_all((copy_preloaded_data,), bool, allow_none_iterable=False, allow_none_elements=False,
-                     raise_error=True)
-        validate_all((missing_std_value,), (int, float), allow_none_iterable=False, allow_none_elements=False,
-                     raise_error=True)
-        validate_all((default_getitem_key,), str, allow_none_elements=False, allow_none_iterable=False,
-                     raise_error=True)
+                 default_getitem_key: str = "raw", missing_val_mode: MissingValMode = MissingValMode.ERROR):
 
         self.files = files
         self.preloaded_dataset = None
@@ -183,11 +172,12 @@ class MultiFileMapDataset(Dataset[T_File], ABC):
         ...
 
 
-class MultiFileArtefactMapDataset(MultiFileMapDataset[T_File], Clearable, ABC):
+class MultiFileArtefactMapDataset(MultiFileMapDataset, Clearable, ABC):
 
     _CLEARABLE_ATTRIBUTES = {"_cache": OrderedDict}
 
-    def __init__(self, files: tuple[T_File], copy_preloaded_data: bool = True,
+    @typechecked
+    def __init__(self, files: tuple[FrameSettings | PairedFrameSettings, ...], copy_preloaded_data: bool = True,
                  missing_std_mode: MissingStdMode = MissingStdMode.CONSTANT,
                  missing_std_value: float = 0.0, attributes_to_match: dict[str, None | int | float] = None,
                  cache_size: int = 0, missing_val_mode: MissingValMode = MissingValMode.ERROR,
@@ -232,7 +222,8 @@ class MultiFileArtefactMapDataset(MultiFileMapDataset[T_File], Clearable, ABC):
 
         return index, val, std, meta
 
-    def get_matching_artefact_images(self, reference_frame_settings_list: list[FrameSettings]) \
+    @typechecked
+    def get_matching_artefact_images(self, reference_frame_settings_list: list[FrameSettings | PairedFrameSettings]) \
             -> tuple[torch.Tensor | None, torch.Tensor | None, torch.Tensor | None, dict | None]:
         """
         Find matching artefact images for multiple reference FrameSettings objects and collate the results into batches.
@@ -246,8 +237,6 @@ class MultiFileArtefactMapDataset(MultiFileMapDataset[T_File], Clearable, ABC):
                 - std_batch: batched std images (tensor or None).
                 - meta_batch: batched metadata dict.
         """
-        validate_all(reference_frame_settings_list, (FrameSettings, PairedFrameSettings), raise_error=True,
-                     allow_none_iterable=False, allow_none_elements=False)
 
         results = []
         for ref in reference_frame_settings_list:
@@ -265,7 +254,7 @@ class MultiFileArtefactMapDataset(MultiFileMapDataset[T_File], Clearable, ABC):
 
         return custom_collate(results)
 
-    def _get_matching_artefact_image(self, reference_frame_settings: FrameSettings) \
+    def _get_matching_artefact_image(self, reference_frame_settings: FrameSettings | PairedFrameSettings) \
             -> None | tuple[int, torch.Tensor, torch.Tensor | None, dict[str, float | int] | None]:
         """
         Get a matching calibration image for the given reference_image_settings object, based on the given
@@ -307,13 +296,13 @@ class MultiFileArtefactMapDataset(MultiFileMapDataset[T_File], Clearable, ABC):
         ...
 
 
-class MultiFileIterDataset(IterableDataset[T_File], ABC):
+class MultiFileIterDataset(IterableDataset, ABC):
     """
     A generic base class for iterable-style Dataset classes. Dataset classes must manage files via a concrete
     implementation of the generic base FileSettings class.
     """
 
-    def __init__(self, files: List[T_File]):
+    def __init__(self, files: List[FrameSettings | PairedFrameSettings]):
 
         self.files = files
 

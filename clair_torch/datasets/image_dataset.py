@@ -4,16 +4,17 @@ Module for the image related dataset classes that inherit torch.Dataset through 
 from typing import Sequence, List
 
 import torch
+from typeguard import typechecked
 
-from clair_torch.common.file_settings import FileSettings, FrameSettings
+from clair_torch.common.file_settings import FileSettings, FrameSettings, PairedFrameSettings
 from clair_torch.datasets.base import MultiFileMapDataset, MultiFileArtefactMapDataset
 from clair_torch.datasets.collate import custom_collate
 from clair_torch.common.enums import MissingStdMode, DarkFieldMode, MissingValMode
 
 
-class ImageMapDataset(MultiFileMapDataset[FrameSettings]):
-
-    def __init__(self, files: tuple[FileSettings], copy_preloaded_data: bool = True,
+class ImageMapDataset(MultiFileMapDataset):
+    @typechecked
+    def __init__(self, files: tuple[FrameSettings | PairedFrameSettings, ...], copy_preloaded_data: bool = True,
                  missing_std_mode: MissingStdMode = MissingStdMode.CONSTANT,
                  missing_std_value: float = 0.0, default_get_item_key: str = "raw",
                  missing_val_mode: MissingValMode = MissingValMode.ERROR):
@@ -34,9 +35,9 @@ class ImageMapDataset(MultiFileMapDataset[FrameSettings]):
                          missing_val_mode=missing_val_mode)
 
 
-class FlatFieldArtefactMapDataset(MultiFileArtefactMapDataset[FrameSettings]):
-
-    def __init__(self, files: tuple[FrameSettings], copy_preloaded_data: bool = True,
+class FlatFieldArtefactMapDataset(MultiFileArtefactMapDataset):
+    @typechecked
+    def __init__(self, files: tuple[FrameSettings | PairedFrameSettings, ...], copy_preloaded_data: bool = True,
                  missing_std_mode: MissingStdMode = MissingStdMode.CONSTANT, missing_std_value: float = 0.0,
                  attributes_to_match: dict[str, None | int | float] = None,
                  cache_size: int = 0, missing_val_mode: MissingValMode = MissingValMode.ERROR,
@@ -80,9 +81,9 @@ class FlatFieldArtefactMapDataset(MultiFileArtefactMapDataset[FrameSettings]):
         return None
 
 
-class DarkFieldArtefactMapDataset(MultiFileArtefactMapDataset[FrameSettings]):
-
-    def __init__(self, files: tuple[FrameSettings], copy_preloaded_data: bool = True,
+class DarkFieldArtefactMapDataset(MultiFileArtefactMapDataset):
+    @typechecked
+    def __init__(self, files: tuple[FrameSettings | PairedFrameSettings, ...], copy_preloaded_data: bool = True,
                  missing_std_mode: MissingStdMode = MissingStdMode.CONSTANT, missing_std_value: float = 0.0,
                  attributes_to_match: dict[str, None | int | float] = None, cache_size: int = 0,
                  missing_val_mode: MissingValMode = MissingValMode.ERROR,

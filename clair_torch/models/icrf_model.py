@@ -1,16 +1,15 @@
 from typing import Optional
-from pathlib import Path
 
 import torch
 import torch.nn as nn
+from typeguard import typechecked
 
 from clair_torch.models.base import ICRFModelBase
-from clair_torch.common.data_io import load_icrf_txt
 from clair_torch.common.enums import InterpMode
 
 
 class ICRFModelPCA(ICRFModelBase):
-
+    @typechecked
     def __init__(self, pca_basis: torch.Tensor, interpolation_mode: InterpMode = InterpMode.LINEAR,
                  initial_power: float = 2.5, icrf: Optional[torch.Tensor] = None) -> None:
 
@@ -53,6 +52,7 @@ class ICRFModelPCA(ICRFModelBase):
 
 
 class ICRFModelDirect(ICRFModelBase):
+    @typechecked
     def __init__(self, n_points: Optional[int] = 256, channels: Optional[int] = 3,
                  interpolation_mode: InterpMode = InterpMode.LINEAR, initial_power: float = 2.5,
                  icrf: Optional[torch.Tensor] = None):
@@ -75,8 +75,4 @@ class ICRFModelDirect(ICRFModelBase):
 
 
 if __name__ == "__main__":
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    icrf = load_icrf_txt(Path(r"E:\Project\camera_linearity\data\ICRF_calibrated.txt"))
-    icrf = icrf.to(device)
-    model = ICRFModelPCA(icrf=icrf).to(device)
-    model.plot_icrf()
+    pass

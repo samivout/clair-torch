@@ -3,6 +3,8 @@ from typing import Type, Optional
 
 from math import isclose
 
+from typeguard import typechecked
+
 
 class BaseMetadata(ABC):
     """
@@ -42,6 +44,7 @@ class BaseMetadata(ABC):
         text_dict = self.get_text_metadata()
         return text_dict | numeric_dict
 
+    @typechecked
     def is_match(self, other: 'BaseMetadata', attributes: dict[str, None | int | float], *,
                  missing_key_fails: bool = True) -> bool:
         """

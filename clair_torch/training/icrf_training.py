@@ -3,8 +3,9 @@ from typing import Optional
 import torch
 from torch.utils.data import DataLoader
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import _LRScheduler
+from torch.optim.lr_scheduler import _LRScheduler, ReduceLROnPlateau
 from tqdm import tqdm
+from typeguard import typechecked
 
 from clair_torch.models.base import ICRFModelBase
 from clair_torch.training.losses import compute_monotonicity_penalty, compute_range_penalty, compute_endpoint_penalty, \
@@ -13,13 +14,14 @@ from clair_torch.visualization.plotting import update_loss_plot
 from clair_torch.common.general_functions import get_valid_exposure_pairs, get_pairwise_valid_pixel_mask
 
 
+@typechecked
 def train_icrf(
         dataloader: DataLoader,
         batch_size: int,
         device: str | torch.device,
         icrf_model: ICRFModelBase,
         optimizers: Optional[list[Optimizer]] = None,
-        schedulers: Optional[list[_LRScheduler | None]] = None,
+        schedulers: Optional[list[_LRScheduler | ReduceLROnPlateau | None]] = None,
         use_relative_linearity_loss: bool = True,
         use_uncertainty_weighting: bool = True,
         epochs: int = 150,

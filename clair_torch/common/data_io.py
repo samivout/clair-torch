@@ -5,9 +5,10 @@ other functions, classes etc. in this project.
 """
 
 from pathlib import Path
-from typing import List, Optional, Iterable, Tuple, Sequence
+from typing import Optional, Iterable, Sequence
 import yaml
 
+from typeguard import typechecked
 import torch
 import numpy as np
 import cv2 as cv
@@ -16,9 +17,9 @@ from clair_torch.common.transforms import Transform
 from clair_torch.common.general_functions import cv_to_torch, normalize_container
 from clair_torch.common.enums import ChannelOrder
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
-from clair_torch.validation.type_checks import validate_all
 
 
+@typechecked
 def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = ChannelOrder.BGR) -> torch.Tensor:
     """
     Utility function for loading an inverse camera response function from a .txt file. Expects a 2D NumPy array
@@ -28,7 +29,7 @@ def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = Channel
         source_channel_order: the order in which the channels are expected to be in the file.
 
     Returns:
-
+        torch.Tensor representing the ICRF.
     """
     if isinstance(path, str):
         path = Path(path)
@@ -56,6 +57,7 @@ def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = Channel
     return icrf_tensor
 
 
+@typechecked
 def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
     """
     Utility function to save an ICRF into a .txt file of the given filepath.
@@ -66,10 +68,7 @@ def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
     Returns:
         None
     """
-    if not isinstance(icrf, torch.Tensor):
-        raise TypeError(f"Expected torch.Tensor, got {type(icrf).__name__}")
-    if not isinstance(path, (str, Path)):
-        raise TypeError(f"Expected str or Path, got {type(path).__name__}")
+    path = Path(path)
     if not is_potentially_valid_file_path(path):
         raise IOError(f"Invalid path for your OS: {path}")
 
@@ -84,7 +83,8 @@ def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
     return
 
 
-def load_principal_components(file_paths: List[str | Path]) -> torch.Tensor:
+@typechecked
+def load_principal_components(file_paths: list[str | Path]) -> torch.Tensor:
     """
     Loads principal component data from text files, one per color channel. The files in the input paths should be
     ordered in the desired channel order. E.g. for RGB images it should point to the red, green and blue files in order.
@@ -104,7 +104,8 @@ def load_principal_components(file_paths: List[str | Path]) -> torch.Tensor:
     return pcs_tensor
 
 
-def load_image(file_path: Path, transforms: Optional[Transform | Iterable[Transform]] = None) -> torch.Tensor:
+@typechecked
+def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) -> torch.Tensor:
     """
     Generic function to load a single image from the given path. Allows also the definition of transformations to be
     performed on the image before returning it upstream.
@@ -115,10 +116,10 @@ def load_image(file_path: Path, transforms: Optional[Transform | Iterable[Transf
     Returns:
         The loaded and possibly operated image in Tensor format.
     """
+    file_path = Path(file_path)
     validate_input_file_path(file_path, suffix=None)
 
     transforms = normalize_container(transforms)
-    validate_all(transforms, Transform, raise_error=True, name="transform")
 
     try:
         image = cv.imread(str(file_path), cv.IMREAD_UNCHANGED)
@@ -134,7 +135,9 @@ def load_image(file_path: Path, transforms: Optional[Transform | Iterable[Transf
     return image
 
 
-def load_video_frames_generator(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None):
+@typechecked
+def load_video_frames_generator(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) \
+        -> torch.Tensor | None:
     """
     Function for loading frames from a video file through a generator.
     Args:
@@ -147,7 +150,6 @@ def load_video_frames_generator(file_path: str | Path, transforms: Optional[Tran
     validate_input_file_path(file_path, suffix=None)
 
     transforms = normalize_container(transforms)
-    validate_all(transforms, Transform, raise_error=True, name="transform")
 
     cap = cv.VideoCapture(str(file_path))
     success, frame = cap.read()
@@ -166,7 +168,7 @@ def load_video_frames_generator(file_path: str | Path, transforms: Optional[Tran
     cap.release()
 
 
-def _get_frame_count(file_path: Path):
+def _get_frame_count(file_path: str | Path):
     """
     Utility function to get the number of frames in a video file.
     Args:
@@ -181,7 +183,8 @@ def _get_frame_count(file_path: Path):
     return num_frames
 
 
-def save_image(tensor: torch.Tensor, image_save_path: str | Path, dtype: np.dtype = np.float64,
+@typechecked
+def save_image(tensor: torch.Tensor, image_save_path: str | Path, dtype: np.dtype = np.dtype("float64"),
                params: Optional[Sequence[int]] = None) -> None:
     """
     Save a PyTorch tensor as a 32-bit float per channel TIFF image.
@@ -192,17 +195,8 @@ def save_image(tensor: torch.Tensor, image_save_path: str | Path, dtype: np.dtyp
         dtype: the NumPy datatype to use to save the image.
         params: Sequence of params to pass to OpenCV imwrite function.
     """
-    if not isinstance(tensor, torch.Tensor):
-        raise TypeError(f"Expected a torch.Tensor, got {type(tensor).__name__}")
-
-    if not isinstance(image_save_path, (str, Path)):
-        raise TypeError(f"Expected path as str or Path, got {type(image_save_path).__name__}")
-
     if not is_potentially_valid_file_path(image_save_path):
         raise IOError(f"Invalid path for your OS: {image_save_path}")
-
-    if params is not None and not all(isinstance(p, int) for p in params):
-        raise TypeError("All OpenCV imwrite params must be integers")
 
     image_save_path.parent.mkdir(parents=True, exist_ok=True)
     if not image_save_path.parent.exists():
@@ -224,7 +218,8 @@ def save_image(tensor: torch.Tensor, image_save_path: str | Path, dtype: np.dtyp
         raise IOError(f"Failed to save image to {image_save_path}")
 
 
-def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*", recursive_search: bool = False) -> List[Path]:
+@typechecked
+def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*", recursive_search: bool = False) -> list[Path]:
     """
     Utility function to collect all filepaths of the given file suffix. Optionally allows recursive search of the
     subdirectories of the given search_root.
@@ -236,14 +231,7 @@ def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*
     Returns:
         List of found filepaths, empty if no files are found.
     """
-    if not isinstance(search_root, (str, Path)):
-        raise TypeError(f"Expected path as str or Path, got {type(search_root).__name__}")
-
-    if not isinstance(pattern, str):
-        raise TypeError(f"Expected pattern as str, got {type(pattern).__name__}")
-
-    if isinstance(search_root, str):
-        search_root = Path(search_root)
+    search_root = Path(search_root)
 
     input_paths = []
 
@@ -259,9 +247,8 @@ def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*
     return input_paths
 
 
-def _pair_main_and_std_files(
-    paths: List[Path], strict_exclusive: bool = True
-) -> Tuple[List[Tuple[Path, Path]], List[Tuple[Path, None]], List[Tuple[None, Path]]]:
+def _pair_main_and_std_files(paths: list[Path], strict_exclusive: bool = True) \
+        -> tuple[list[tuple[Path, Path]], list[tuple[Path, None]], list[tuple[None, Path]]]:
     """
     Pairs files with associated STD files and sorts them into three categories. In strict mode categories are mutually
     exclusive, while when strict mode is not used, a file can appear in both the paired and either main or STD
@@ -306,7 +293,8 @@ def _pair_main_and_std_files(
     return paired, main_only, std_only
 
 
-def read_yaml(file_path: Path) -> dict:
+@typechecked
+def read_yaml(file_path: str | Path) -> dict:
     """
     Utility function to read the contents of an .yaml file into a dictionary.
     Args:
@@ -315,6 +303,7 @@ def read_yaml(file_path: Path) -> dict:
     Returns:
         Dictionary of the .yaml contents.
     """
+    file_path = Path(file_path)
     validate_input_file_path(file_path, suffix="yaml")
     with open(file_path) as f:
         file_content = yaml.safe_load(f)

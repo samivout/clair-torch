@@ -6,7 +6,7 @@ from typing import Optional, List, Sequence
 from pathlib import Path
 from abc import ABC, abstractmethod
 
-import torch
+from typeguard import typechecked
 
 from clair_torch.common.transforms import Transform
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
@@ -33,7 +33,8 @@ class BaseFileSettings(ABC):
     cpu_transforms: Transform | Sequence[Transform] | None
         Optional collection of Transforms that will be performed on the data right after reading it from a file.
     """
-    def __init__(self, input_path: Path, output_path: Optional[Path] = None,
+    @typechecked
+    def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
                  cpu_transforms: Optional[Transform | Sequence[Transform]] = None):
         """
@@ -46,12 +47,9 @@ class BaseFileSettings(ABC):
             default_output_root: a root directory path to utilize if no output_path is given.
             cpu_transforms: Transform(s) to be performed on the data on the cpu-side upon loading the data.
         """
-        if not isinstance(input_path, (str, Path)):
-            raise TypeError(f"Expected path as str or Path, got {type(input_path).__name__}")
-        if output_path is not None and not isinstance(output_path, (str, Path)):
-            raise TypeError(f"Expected path as str or Path, got {type(output_path).__name__}")
-        if default_output_root is not None and not isinstance(default_output_root, (str, Path)):
-            raise TypeError(f"Expected path as str or Path, got {type(default_output_root).__name__}")
+        input_path = Path(input_path)
+        output_path = Path(output_path) if output_path is not None else None
+        default_output_root = Path(default_output_root) if default_output_root is not None else None
 
         validate_input_file_path(input_path, None)
         self.input_path = input_path

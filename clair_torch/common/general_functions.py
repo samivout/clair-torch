@@ -9,11 +9,12 @@ from collections.abc import Iterable, Sized
 import yaml
 import argparse
 
+from typeguard import typechecked
 import torch
 import numpy as np
 from torchvision.transforms import GaussianBlur
 
-from clair_torch.validation.type_checks import validate_all, is_broadcastable
+from clair_torch.validation.type_checks import is_broadcastable
 
 
 def check_equal_lengths(*sequences: Optional[Sequence[Any]],
@@ -52,6 +53,7 @@ def check_equal_lengths(*sequences: Optional[Sequence[Any]],
     return (len(unique_lengths) <= 1), lengths
 
 
+@typechecked
 def normalize_container(value: Any, target_type: Type = list, *, convert_if_iterable: bool = False,
                         exclude_types: tuple[type, ...] = (str, bytes, np.ndarray, torch.Tensor),
                         none_if_all_none: bool = True) -> Iterable | Sized | None:
@@ -112,10 +114,11 @@ def zip_with_none(*sequences: Optional[Sequence[Any]],
         yield tuple(next(it) for it in iterators)
 
 
+@typechecked
 def weighted_mean_and_std(
         values: torch.Tensor, weights: Optional[torch.Tensor] = None, mask: Optional[torch.Tensor] = None,
-        dim=None, keepdim=False, eps: float = 1e-8, compute_std: Optional[bool] = True) \
-        -> tuple[torch.Tensor, torch.Tensor]:
+        dim=None, keepdim=False, eps:  int | float = 1e-8, compute_std: Optional[bool] = True) \
+        -> tuple[torch.Tensor, torch.Tensor | None]:
     """
     Computes the weighted mean and variance of `values`, with optional weights and boolean mask.
     Args:
@@ -175,6 +178,7 @@ def weighted_mean_and_std(
     return mean, std
 
 
+@typechecked
 def flat_field_mean(flat_field: torch.Tensor, mid_area_side_fraction: float) -> torch.Tensor:
     """
     Computes the spatial mean over a centered square ROI for each image and channel.
@@ -186,10 +190,6 @@ def flat_field_mean(flat_field: torch.Tensor, mid_area_side_fraction: float) -> 
     Returns:
         Tensor: Mean over the ROI, shape (...)
     """
-    if not isinstance(flat_field, torch.Tensor):
-        raise TypeError(f"Expected flat_field as torch.Tensor, got {type(flat_field)}")
-    if not isinstance(mid_area_side_fraction, float):
-        raise TypeError(f"Expected mid_area_side_fraction as float, got {type(mid_area_side_fraction)}")
     if mid_area_side_fraction > 1.0 or mid_area_side_fraction < 0.0:
         raise ValueError(f"mid_area_side_fraction should be between 0.0 and 1.0")
 
@@ -210,6 +210,7 @@ def flat_field_mean(flat_field: torch.Tensor, mid_area_side_fraction: float) -> 
     return cropped.mean(dim=(-1, -2), keepdim=True)  # shape: (N, C, 1, 1)
 
 
+@typechecked
 def flatfield_correction(images: torch.Tensor, flatfield: torch.Tensor, flatfield_mean_val: torch.Tensor,
                          epsilon: float = 1e-6) -> torch.Tensor:
     """
@@ -228,9 +229,6 @@ def flatfield_correction(images: torch.Tensor, flatfield: torch.Tensor, flatfiel
     Returns:
         Tensor: Corrected image tensor, same shape as input.
     """
-    validate_all((images, flatfield, flatfield_mean_val), torch.Tensor, raise_error=True, allow_none_iterable=False,
-                 name="Tensor")
-    validate_all([epsilon], float, raise_error=True, allow_none_iterable=False, name="Epsilon")
 
     is_broadcastable(images.shape, flatfield.shape, raise_error=True)
     is_broadcastable(images.shape, flatfield_mean_val.shape, raise_error=True)
@@ -240,6 +238,7 @@ def flatfield_correction(images: torch.Tensor, flatfield: torch.Tensor, flatfiel
     return corrected_images
 
 
+@typechecked
 def get_valid_exposure_pairs(increasing_exposure_values: torch.Tensor, exposure_ratio_threshold: Optional[float] = None,
                              ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
@@ -255,10 +254,6 @@ def get_valid_exposure_pairs(increasing_exposure_values: torch.Tensor, exposure_
             - j_idx: (P,) indices of second images
             - ratio_pairs: (P,) exposure ratios exposure[i] / exposure[j]
     """
-    if not isinstance(increasing_exposure_values, torch.Tensor):
-        raise TypeError(f"Expected increasing_exposure_values as torch.Tensor, got {type(increasing_exposure_values)}")
-    if exposure_ratio_threshold is not None and not isinstance(exposure_ratio_threshold, float):
-        raise TypeError(f"Expected exposure_ratio_threshold as float, got {type(exposure_ratio_threshold)}")
 
     N = increasing_exposure_values.shape[0]
     device = increasing_exposure_values.device
@@ -277,6 +272,7 @@ def get_valid_exposure_pairs(increasing_exposure_values: torch.Tensor, exposure_
     return i_idx, j_idx, ratio_pairs
 
 
+@typechecked
 def get_pairwise_valid_pixel_mask(image_value_stack: torch.Tensor, i_idx: torch.Tensor, j_idx: torch.Tensor,
                                   image_std_stack: Optional[torch.Tensor] = None,
                                   val_lower: float = 0.0, val_upper: float = 1.0,
@@ -298,11 +294,6 @@ def get_pairwise_valid_pixel_mask(image_value_stack: torch.Tensor, i_idx: torch.
     Returns:
         A boolean tensor that marks invalid pixel positions in a pair with False, shape (P, C, H, W).
     """
-    validate_all((image_value_stack, i_idx, j_idx), torch.Tensor, allow_none_iterable=False, raise_error=True)
-    validate_all((val_lower, val_upper), float, allow_none_iterable=False, raise_error=True)
-    validate_all((std_lower, std_upper), float, allow_none_iterable=False, allow_none_elements=True, raise_error=True)
-    if image_std_stack is not None and not isinstance(image_std_stack, torch.Tensor):
-        raise TypeError(f"Expected image_std_stack as torch.Tensor, got {type(image_std_stack)}")
     if val_lower > val_upper:
         raise ValueError("Lower threshold cannot be a larger value than upper threshold.")
     if std_lower is not None and std_upper is not None and (std_lower > std_upper):
@@ -397,6 +388,7 @@ def normalize_tensor(x: torch.Tensor, max_val: Optional[float] = None, min_val: 
     return x_scaled
 
 
+@typechecked
 def clamp_along_dims(x: torch.Tensor, dim: int | tuple[int, ...],
                      min_max_pairs: tuple[float, float] | list[tuple[float, float]]) -> torch.Tensor:
     """
@@ -413,9 +405,6 @@ def clamp_along_dims(x: torch.Tensor, dim: int | tuple[int, ...],
     """
     if isinstance(dim, int):
         dim = (dim,)
-
-    validate_all([x], torch.Tensor, raise_error=True, allow_none_elements=False, allow_none_iterable=False)
-    validate_all(dim, int, raise_error=True, allow_none_elements=False, allow_none_iterable=False)
 
     dim = tuple(d % x.ndim for d in dim)  # handle negative dims
 
@@ -447,6 +436,7 @@ def clamp_along_dims(x: torch.Tensor, dim: int | tuple[int, ...],
     return torch.clamp(x, min=mins, max=maxs)
 
 
+@typechecked
 def conditional_gaussian_blur(image: torch.Tensor, mask_map: torch.Tensor, threshold: float, kernel_size: int,
                               differentiable: bool = False, alpha: float = 50.0) -> torch.Tensor:
     """

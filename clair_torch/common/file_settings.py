@@ -1,11 +1,13 @@
 """
 Module for concrete classes used to manage single input-output files and pairs of input-output files.
 """
+from __future__ import annotations
 
 from pathlib import Path
 from typing import Iterable, Optional, Tuple, List, Sequence, Type, Callable
 
-from clair_torch.validation.type_checks import validate_all
+from typeguard import typechecked
+
 from clair_torch.metadata.imaging_metadata import ImagingMetadata, BaseMetadata
 from clair_torch.common.transforms import Transform
 from clair_torch.common.base import BaseFileSettings
@@ -22,7 +24,8 @@ class FileSettings(BaseFileSettings):
     Inherits attributes from BaseFileSettings.
     """
 
-    def __init__(self, input_path: Path, output_path: Optional[Path] = None,
+    @typechecked
+    def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
                  cpu_transforms: Optional[Transform | Iterable[Transform]] = None):
         """
@@ -108,15 +111,13 @@ class FrameSettings(FileSettings):
     metadata: BaseMetadata
         an encapsulated instance of a BaseMetadata subclass for managing the metadata related to images.
     """
-    def __init__(self, input_path: Path, output_path: Optional[Path] = None,
+    @typechecked
+    def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
                  cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
                  metadata_cls: Type[BaseMetadata] = ImagingMetadata,
                  *metadata_args, **metadata_kwargs):
         super().__init__(input_path, output_path, default_output_root, cpu_transforms)
-
-        if not issubclass(metadata_cls, BaseMetadata):
-            raise TypeError(f"Expected subclass of BaseMetadata, got {metadata_cls}")
 
         self.metadata = metadata_cls(input_path, *metadata_args, **metadata_kwargs)
 
@@ -144,7 +145,8 @@ class FrameSettings(FileSettings):
         """
         return self.metadata.get_all_metadata()
 
-    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata],
+    @typechecked
+    def is_match(self, reference: FrameSettings | PairedFrameSettings | BaseMetadata,
                  attributes: dict[str, Optional[int | float]]) -> bool:
         """
         Method for evaluating whether the metadata contained in a given FramSettings instance or Metadata instance are a
@@ -158,7 +160,7 @@ class FrameSettings(FileSettings):
         Returns:
             bool, True for a successful match, False for failed.
         """
-        if isinstance(reference, self.__class__):
+        if isinstance(reference, (FrameSettings, PairedFrameSettings)):
             reference_metadata = reference.metadata
         elif isinstance(reference, BaseMetadata):
             reference_metadata = reference
@@ -177,10 +179,10 @@ class PairedFileSettings(FileSettings):
     -----------
     Inherits attributes from FileSettings.
     """
-
-    def __init__(self, val_input_path: Path, std_input_path: Optional[Path] = None,
-                 val_output_path: Optional[Path] = None,
-                 std_output_path: Optional[Path] = None,
+    @typechecked
+    def __init__(self, val_input_path: str | Path, std_input_path: Optional[str | Path] = None,
+                 val_output_path: Optional[str | Path] = None,
+                 std_output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
                  val_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
                  std_cpu_transforms: Optional[Transform | Iterable[Transform]] = None):
@@ -262,8 +264,9 @@ class PairedFrameSettings(PairedFileSettings):
         image. Typically, these are equal to the val_metadata values, so by default this is not parsed. The parse_std_meta
         init argument is used to determine whether the std_metadata is parsed or not.
     """
-    def __init__(self, val_input_path: Path, std_input_path: Optional[Path] = None,
-                 val_output_path: Optional[Path] = None, std_output_path: Optional[Path] = None,
+    @typechecked
+    def __init__(self, val_input_path: str | Path, std_input_path: Optional[str | Path] = None,
+                 val_output_path: Optional[str | Path] = None, std_output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
                  val_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
                  std_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
@@ -288,9 +291,6 @@ class PairedFrameSettings(PairedFileSettings):
         """
         super().__init__(val_input_path, std_input_path, val_output_path, std_output_path, default_output_root,
                          val_cpu_transforms, std_cpu_transforms)
-
-        if not issubclass(metadata_cls, BaseMetadata):
-            raise TypeError(f"Expected subclass of BaseMetadata, got {metadata_cls}")
 
         self.val_metadata = metadata_cls(self.val_settings.input_path, *metadata_args, **metadata_kwargs)
 
@@ -324,7 +324,9 @@ class PairedFrameSettings(PairedFileSettings):
         """
         return self.val_metadata.get_all_metadata()
 
-    def is_match(self, reference: Type['FrameSettings'] | Type[BaseMetadata], attributes: dict[str, None | int | float]) -> bool:
+    @typechecked
+    def is_match(self, reference: FrameSettings | PairedFrameSettings | BaseMetadata,
+                 attributes: dict[str, Optional[int | float]]) -> bool:
         """
         Method for evaluating whether the metadata contained in a given FramSettings instance or Metadata instance are a
         match based on the given sequence of attributes, which act as keys to the metadata dictionary in a Metadata
@@ -337,7 +339,7 @@ class PairedFrameSettings(PairedFileSettings):
         Returns:
             bool, True for a successful match, False for failed.
         """
-        if isinstance(reference, self.__class__):
+        if isinstance(reference, (FrameSettings, PairedFrameSettings)):
             reference_meta = reference.val_metadata
         elif isinstance(reference, BaseMetadata):
             reference_meta = reference
@@ -347,6 +349,7 @@ class PairedFrameSettings(PairedFileSettings):
         return self.val_metadata.is_match(reference_meta, attributes)
 
 
+@typechecked
 def file_settings_constructor(
     dir_paths: Path | Sequence[Path],
     file_pattern: str,
@@ -422,13 +425,14 @@ def file_settings_constructor(
     else:
         paired_cls, frame_cls = PairedFileSettings, FileSettings
 
-    paired_settings = [make_paired_settings(paired_cls, p) for p in all_paired]
-    main_settings = [make_single_settings(frame_cls, 0, val_cpu_transforms, m) for m in all_main]
-    std_settings  = [make_single_settings(frame_cls, 1, std_cpu_transforms, s) for s in all_std]
+    paired_settings = tuple(make_paired_settings(paired_cls, p) for p in all_paired)
+    main_settings = tuple(make_single_settings(frame_cls, 0, val_cpu_transforms, m) for m in all_main)
+    std_settings = tuple(make_single_settings(frame_cls, 1, std_cpu_transforms, s) for s in all_std)
 
     return paired_settings, main_settings, std_settings
 
 
+@typechecked
 def group_frame_settings_by_attributes(list_of_frame_settings: List[FrameSettings],
                                        attributes: dict[str, None | int | float]) \
         -> List[Tuple[dict[str, str | float | int], List[FrameSettings]]]:
@@ -442,9 +446,6 @@ def group_frame_settings_by_attributes(list_of_frame_settings: List[FrameSetting
         List of tuples, the first item in the tuple containing a dictionary of the attributes used to generate that
         group. The second item in the tuple contains a list of the FrameSettings objects belonging to that group.
     """
-
-    validate_all(list_of_frame_settings, (FrameSettings, PairedFrameSettings),
-                 allow_none_elements=False, allow_none_iterable=False, raise_error=True)
 
     list_of_grouped_frame_settings = []
     list_of_group_metas = []

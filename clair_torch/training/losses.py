@@ -7,7 +7,7 @@ from typing import Optional
 import torch
 
 from clair_torch.common.general_functions import weighted_mean_and_std
-from clair_torch.validation.type_checks import validate_all, validate_dimensions, validate_multiple_dimensions
+from clair_torch.validation.type_checks import validate_dimensions, validate_multiple_dimensions
 
 
 def pixelwise_linearity_loss(
@@ -163,8 +163,6 @@ def compute_range_penalty(curve: torch.Tensor, epsilon: float = 1e-6, per_channe
     Returns:
         Penalty terms as scalar tensor, or one element per channel.
     """
-    validate_all([curve], torch.Tensor, allow_none_elements=False, allow_none_iterable=False, raise_error=True)
-    validate_all([epsilon], float, allow_none_elements=False, allow_none_iterable=False, raise_error=True)
 
     lower = torch.relu(-curve)      # Penalize values under 0
     upper = torch.relu(curve - 1)   # Penalize values over 1
@@ -189,7 +187,6 @@ def compute_endpoint_penalty(curve: torch.Tensor, per_channel: Optional[bool] = 
     """
     if curve.ndim == 1:
         curve = curve.unsqueeze(1)
-    validate_all([curve], torch.Tensor, allow_none_iterable=False, allow_none_elements=False, raise_error=True)
     validate_dimensions(curve, (1, 2), raise_error=True)
 
     penalty = (curve[0, :] - 0) ** 2 + (curve[-1, :] - 1) ** 2  # - 0 to emphasize the definition of the loss.
@@ -209,8 +206,6 @@ def gaussian_value_weights(image: torch.Tensor, scale: Optional[float] = 30.0) -
     Returns:
         weight: torch.Tensor of shape (N, C, H, W)
     """
-    validate_all([image], torch.Tensor, allow_none_iterable=False, allow_none_elements=False, raise_error=True)
-    validate_all([scale], float, allow_none_iterable=False, allow_none_elements=False, raise_error=True)
 
     return torch.exp(-scale * (image - 0.5) ** 2)
 
@@ -233,9 +228,6 @@ def combined_gaussian_pair_weights(
     Returns:
         combined_weights: Tensor of shape (P, C, H, W) for input of (N, C, H, W).
     """
-    validate_all([image_stack, i_idx, j_idx], torch.Tensor, allow_none_iterable=False, allow_none_elements=False,
-                 raise_error=True)
-    validate_all([scale], float, allow_none_iterable=False, allow_none_elements=False, raise_error=True)
     validate_multiple_dimensions([i_idx, j_idx], [1, 1])
 
     image_i = image_stack[i_idx]  # (P, C, H, W)

@@ -1,6 +1,8 @@
 import pytest
 from unittest.mock import patch
 
+from typeguard import TypeCheckError
+
 from clair_torch.metadata.imaging_metadata import ImagingMetadata, VideoMetadata
 
 
@@ -55,7 +57,7 @@ class TestImagingMetadata:
 
         val_input_path = 1
 
-        with pytest.raises(TypeError, match=f"Expected val_input_path as Path, got {type(val_input_path)}"):
+        with pytest.raises(TypeCheckError):
             _ = ImagingMetadata(val_input_path)
 
 

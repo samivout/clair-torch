@@ -81,8 +81,10 @@ def run_image_linearization(params: Parameters):
             std_path = None
 
         save_image(linearized, val_path)
+        print(f"Saved image to {val_path}")
         if std is not None:
             save_image(std, std_path)
+            print(f"Saved image to {std_path}")
 
 
 if __name__ == "__main__":

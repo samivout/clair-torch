@@ -5,8 +5,11 @@ import platform
 from typing import Optional
 from pathlib import Path
 
+from typeguard import typechecked
 
-def validate_input_file_path(path: Path, suffix: Optional[str] = None) -> None:
+
+@typechecked
+def validate_input_file_path(path: str | Path, suffix: Optional[str] = None) -> None:
     """
     Utility function for validating the given input filepath.
     Args:
@@ -16,6 +19,7 @@ def validate_input_file_path(path: Path, suffix: Optional[str] = None) -> None:
     Returns:
         None.
     """
+    path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Path doesn't exist: {path}")
     if not path.is_file():
@@ -24,7 +28,8 @@ def validate_input_file_path(path: Path, suffix: Optional[str] = None) -> None:
         raise ValueError(f"Expected {suffix} filetype, got {path.suffix}")
 
 
-def is_potentially_valid_file_path(path: Path) -> bool:
+@typechecked
+def is_potentially_valid_file_path(path: str | Path) -> bool:
     """
     Utility function for checking if a given path, that doesn't necessarily exist, is likely to be valid.
     Args:
@@ -33,6 +38,7 @@ def is_potentially_valid_file_path(path: Path) -> bool:
     Returns:
         True if path is valid, False if not.
     """
+    path = Path(path)
     try:
         if not path or not path.name:
             return False

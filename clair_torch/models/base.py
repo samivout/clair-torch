@@ -5,12 +5,14 @@ import numpy as np
 import torch
 from matplotlib import pyplot as plt
 from torch import nn as nn
+from typeguard import typechecked
 
 from clair_torch.common.enums import InterpMode
 from clair_torch.visualization.plotting import plot_data_and_diff
 
 
 class ICRFModelBase(nn.Module, ABC):
+    @typechecked
     def __init__(self, n_points: Optional[int] = 256, channels: Optional[int] = 3,
                  interpolation_mode: InterpMode = InterpMode.LINEAR, initial_power: float = 2.5,
                  icrf: Optional[torch.Tensor] = None):

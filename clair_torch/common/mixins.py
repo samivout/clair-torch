@@ -4,11 +4,14 @@ A module for mixin classes to be used via (multiple) inheritance with other clas
 import copy
 from typing import Any
 
+from typeguard import typechecked
+
 
 class Clearable:
     """
     A mixin class to define certain attributes, whose values are easy to clear or set to the given default on call.
     """
+    @typechecked
     def __init__(self, clearable_attributes: dict[str, Any]):
         self.clearable_attributes = clearable_attributes
 
