@@ -21,13 +21,12 @@ def pixelwise_linearity_loss(
     """
     Compute a differentiable linearity loss for a stack of images taken at different exposures.
     Args:
-        image_value_stack: image stack of shape (N, C, H, W), values in [0, 1]
-        exposure_values: 1D tensor of shape (N,), exposure values
+        image_value_stack: stack of images, ndim >= 2, shape (N, C, H, W), values in [0, 1]
+        i_idx: Index tensor of shape (P,) for first image in each pair, ndim=1.
+        j_idx: Index tensor of shape (P,) for second image in each pair, ndim=1.
+        ratio_pairs: Tensor of shape (P,) for exposure ratios exposure[i] / exposure[j]
         image_std_stack: optional standard deviation estimates, same shape as image_value_stack
-        lower: pixel intensity threshold (inclusive)
-        upper: pixel intensity threshold (inclusive)
         use_relative: compute relative difference instead of absolute
-        exposure_ratio_threshold: threshold value, under which exposure ratios are rejected.
 
     Returns:
         A scalar loss (mean deviation from expected linearity across valid pixels and channel pairs)
@@ -109,10 +108,9 @@ def compute_spatial_linearity_loss(pixelwise_losses: torch.Tensor, pixelwise_err
     return spatial_linearity_loss, spatial_linearity_loss_std, spatial_linearity_loss_error
 
 
-def compute_monotonicity_penalty(curve, squared=True, per_channel: bool = False) -> torch.Tensor:
+def compute_monotonicity_penalty(curve: torch.Tensor, squared=True, per_channel: bool = False) -> torch.Tensor:
     """
     Get a penalty term for a function (tensor) if it is not monotonically increasing.
-    # TODO: flip dimensions so that channels are the leftmost dimension.
     Args:
         curve: the function to determine a penalty term for.
         squared: whether to square the penalty terms.
@@ -120,14 +118,14 @@ def compute_monotonicity_penalty(curve, squared=True, per_channel: bool = False)
     Returns:
         Penalty terms as scalar tensor, or one element per channel.
     """
-    df = curve[1:, :] - curve[:-1, :]  # Shape: (N-1, C)
+    df = curve[:, 1:] - curve[:, :-1]  # Shape: (N-1, C)
     mask = (df <= 0).float()  # 1.0 where non-strictly increasing
     if squared:
         relu_neg = mask * df.pow(2)  # penalize squared difference
     else:
         relu_neg = mask * (-df)  # penalize linearly
 
-    penalty = relu_neg.sum(dim=0)  # Shape: (C,)
+    penalty = relu_neg.sum(dim=1)  # Shape: (C,)
 
     if per_channel:
         return penalty
@@ -137,15 +135,14 @@ def compute_monotonicity_penalty(curve, squared=True, per_channel: bool = False)
 def compute_smoothness_penalty(curve: torch.Tensor, per_channel: bool = False) -> torch.Tensor:
     """
     Get a penalty term for a function (tensor) if it is not sufficiently smooth.
-    # TODO: flip dimensions so that channels are the leftmost dimension.
     Args:
         curve:
         per_channel: whether to return a per-channel loss, or sum the channel losses into a scalar tensor.
     Returns:
         Penalty terms as scalar tensor, or one element per channel.
     """
-    second_diff = curve[:-2, :] - 2 * curve[1:-1, :] + curve[2:, :]
-    penalty = second_diff.pow(2).sum(dim=0)  # Shape: [3]
+    second_diff = curve[:, :-2] - 2 * curve[:, 1:-1] + curve[:, 2:]
+    penalty = second_diff.pow(2).sum(dim=1)  # Shape: [3]
     if per_channel:
         return penalty
     return torch.sum(penalty)
@@ -154,7 +151,6 @@ def compute_smoothness_penalty(curve: torch.Tensor, per_channel: bool = False) -
 def compute_range_penalty(curve: torch.Tensor, epsilon: float = 1e-6, per_channel: bool = False) -> torch.Tensor:
     """
     Get a penalty term for a function (tensor) if it breaks [0, 1] value range.
-    # TODO: flip dimensions so that channels are the leftmost dimension.
     Args:
         curve: the function to determine a penalty term for.
         epsilon: small epsilon to avoid vanishing gradients.
@@ -166,7 +162,7 @@ def compute_range_penalty(curve: torch.Tensor, epsilon: float = 1e-6, per_channe
 
     lower = torch.relu(-curve)      # Penalize values under 0
     upper = torch.relu(curve - 1)   # Penalize values over 1
-    penalty = (lower + upper).sum(dim=0)  # Sum over 256, shape: [3]
+    penalty = (lower + upper).sum(dim=1)  # Sum over 256, shape: [3]
 
     if per_channel:
         return penalty
@@ -177,7 +173,6 @@ def compute_endpoint_penalty(curve: torch.Tensor, per_channel: Optional[bool] = 
     """
     Get a penalty term for a function (tensor), whose endpoints are not exactly 0 and 1. The penalty is defined as the
     sum of the squares of the deviations at start and end from 0 and 1 respectively.
-    # TODO: flip dimensions so that channels are the leftmost dimension.
     Args:
         curve: curve: the function to determine a penalty term for. Shape (D, C) with D and C representing the number
             of datapoints in the function and C representing the number of channels.
@@ -189,7 +184,7 @@ def compute_endpoint_penalty(curve: torch.Tensor, per_channel: Optional[bool] = 
         curve = curve.unsqueeze(1)
     validate_dimensions(curve, (1, 2), raise_error=True)
 
-    penalty = (curve[0, :] - 0) ** 2 + (curve[-1, :] - 1) ** 2  # - 0 to emphasize the definition of the loss.
+    penalty = (curve[:, 0] - 0) ** 2 + (curve[:, -1] - 1) ** 2  # - 0 to emphasize the definition of the loss.
     if per_channel:
         return penalty
     return torch.sum(penalty)

@@ -90,9 +90,9 @@ def plot_data_and_diff(x_datapoints: np.ndarray, datapoints: np.ndarray, datapoi
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))
     lines_curve, lines_deriv = [], []
 
-    for c in range(datapoints.shape[1]):
-        (line,) = axs[0].plot(x_datapoints, datapoints[:, c], label=f"Channel {c}")
-        (dline,) = axs[1].plot(x_datapoints[:-1], datapoints_diff[:, c], label=f"Channel {c}")
+    for c in range(datapoints.shape[0]):
+        (line,) = axs[0].plot(x_datapoints, datapoints[c, :], label=f"Channel {c}")
+        (dline,) = axs[1].plot(x_datapoints[:-1], datapoints_diff[c, :], label=f"Channel {c}")
         lines_curve.append(line)
         lines_deriv.append(dline)
 

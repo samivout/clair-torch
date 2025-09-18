@@ -1,3 +1,6 @@
+"""
+Module for the base model classes.
+"""
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -12,16 +15,50 @@ from clair_torch.visualization.plotting import plot_data_and_diff
 
 
 class ICRFModelBase(nn.Module, ABC):
+    """
+    Base class for the ICRF model classes. Implements common functionality and acts as a guideline for implementing the
+    model interface.
+
+    Attributes
+    ----------
+    _n_points: int
+        how many datapoints the range [0, 1] is split into in modelling the ICRF.
+    _channels: int
+        how many color channels are managed by the model. One ICRF curve for each channel.
+    interpolation_mode: InterpMode
+        enum determining how the forward call of the model is handled. See InterpMode doc for more.
+    _initial_power: float
+        a guess at the initial form of the ICRF curve, represented by raising the linear range [0, 1] to this power.
+    _fig: Figure
+        a matplotlib Figure used for visualizing the model.
+    _axs: List[Axes]
+        a list of matplotlib axes used for model visualization.
+    _lines_curve: List[Line2D]
+        a list of the matplotlib Line2D objects for the plotted curves used in model visualization.
+    _lines_deriv: List[Line2D]
+        a list of the matplotlib Line2D objects for the plotted curves' derivatives used in model visualization.
+    """
     @typechecked
     def __init__(self, n_points: Optional[int] = 256, channels: Optional[int] = 3,
                  interpolation_mode: InterpMode = InterpMode.LINEAR, initial_power: float = 2.5,
                  icrf: Optional[torch.Tensor] = None):
-
+        """
+        Initializes the ICRF model instance with the given parameters. The icrf argument overrides n_points and channels
+        by its shape if given.
+        Args:
+            n_points: how many datapoints the range [0, 1] is split into in modelling the ICRF.
+            channels: how many datapoints the range [0, 1] is split into in modelling the ICRF.
+            interpolation_mode: enum determining how the forward call of the model is handled. See InterpMode doc for
+                more.
+            initial_power: a guess at the initial form of the ICRF curve, represented by raising the linear range [0, 1]
+                to this power.
+            icrf: an optional initial form of the ICRF curves, overrides n_points and channels.
+        """
         super().__init__()
 
         # If an ICRF curve is given, its shape will override the given n_points and channels parameters.
         if icrf is not None:
-            n_points, channels = icrf.shape
+            channels, n_points = icrf.shape
 
         self._channels = channels
         self._initial_power = initial_power
@@ -72,7 +109,8 @@ class ICRFModelBase(nn.Module, ABC):
     def channel_params(self, c: int) -> list[nn.Parameter]:
         """
         Method for getting the model parameters for the channel of the given index. Subclasses implement the logic
-        based on their model parameters.
+        based on their model parameters. This should be the main method of accessing the optimization parameters for
+        feeding them to a torch.Optimizer.
         Args:
             c: channel index.
 
@@ -92,7 +130,7 @@ class ICRFModelBase(nn.Module, ABC):
         Initializes a default ICRF curve if None is given, based on the number of datapoints, channels and the value
         of the initial power.
         """
-        return torch.linspace(0, 1, self.n_points).unsqueeze(1).repeat(1, self.channels) ** self.initial_power
+        return torch.transpose(torch.linspace(0, 1, self.n_points).unsqueeze(1).repeat(1, self.channels) ** self.initial_power, 0, 1)
 
     def forward(self, image: torch.Tensor) -> torch.Tensor:
         return self._dispatch[self.interpolation_mode](image)
@@ -101,10 +139,10 @@ class ICRFModelBase(nn.Module, ABC):
         """
         Nearest-neighbour table lookup (no gradients).
         image: (N, C, H, W) with values in [0, 1]
-        self.icrf: (L, C)  ─ first dim = curve sample, second dim = channel
+        self.icrf: (L, C) first dim = curve sample, second dim = channel
         """
         N, C, H, W = image.shape
-        L = self.icrf.shape[0]
+        L = self.icrf.shape[1]
 
         # integer sample index per pixel
         idx = (image * (L - 1)).round().clamp(0, L - 1).long()  # (N, C, H, W)
@@ -117,12 +155,12 @@ class ICRFModelBase(nn.Module, ABC):
         )
 
         # advanced indexing: returns (N, C, H, W)
-        return self.icrf[idx, chan]
+        return self.icrf[chan, idx]
 
     def _forward_linear(self, image: torch.Tensor) -> torch.Tensor:
         # image : (N, C, H, W) in [0, 1]
         N, C, H, W = image.shape
-        L = self.icrf.size(0)
+        L = self.icrf.size(1)
 
         # scale pixel values to LUT index range [0, L-1]
         x = (image * (L - 1)).clamp_(0, L - 1)
@@ -135,7 +173,7 @@ class ICRFModelBase(nn.Module, ABC):
         def gather(ix):
             flat_ix = ix.reshape(-1)  # safe flatten
             channels = torch.arange(C, device=ix.device).repeat(N * H * W)
-            return self.icrf[flat_ix, channels].reshape(N, C, H, W)  # safe reshape
+            return self.icrf[channels, flat_ix].reshape(N, C, H, W)  # safe reshape
 
         g0 = gather(x0)
         g1 = gather(x1)
@@ -146,7 +184,7 @@ class ICRFModelBase(nn.Module, ABC):
     def _forward_catmull(self, image: torch.Tensor) -> torch.Tensor:
         # Assume image shape: (N, C, H, W), values in [0, 1]
         N, C, H, W = image.shape
-        L = self.icrf.shape[0]  # number of ICRF samples
+        L = self.icrf.shape[1]  # number of ICRF samples
 
         # Scale input to [0, L - 1]
         x = (image * (L - 1)).clamp(0, L - 1)
@@ -178,7 +216,7 @@ class ICRFModelBase(nn.Module, ABC):
         def gather_idx(ix):
             flat_idx = ix.view(-1)
             channels = torch.arange(C).repeat(N * H * W)
-            return self.icrf[flat_idx, channels].view(N, C, H, W)
+            return self.icrf[channels, flat_idx].view(N, C, H, W)
 
         g = [gather_idx(ix) for ix in x_indices]
 
@@ -195,7 +233,7 @@ class ICRFModelBase(nn.Module, ABC):
         """
         icrf_cpu = self.icrf.detach().cpu().numpy()
         x = np.linspace(0, 1, self.n_points)
-        dy = np.diff(icrf_cpu, axis=0)
+        dy = np.diff(icrf_cpu, axis=1)
         dx = x[1] - x[0]
         dydx = dy / dx
 
@@ -213,8 +251,8 @@ class ICRFModelBase(nn.Module, ABC):
             self._fig, self._axs, self._lines_curve, self._lines_deriv = plot_data_and_diff(x, icrf_cpu, dydx)
         else:
             for c in range(self.channels):
-                self._lines_curve[c].set_ydata(icrf_cpu[:, c])
-                self._lines_deriv[c].set_ydata(dydx[:, c])
+                self._lines_curve[c].set_ydata(icrf_cpu[c, :])
+                self._lines_deriv[c].set_ydata(dydx[c, :])
 
         self._fig.canvas.draw()
         self._fig.canvas.flush_events()
