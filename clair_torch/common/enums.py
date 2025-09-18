@@ -53,6 +53,14 @@ class ChannelOrder(Enum):
     ANY = auto()
 
 
+class DimensionOrder(Enum):
+    """
+    Manges the ordering of data dimensions.
+    """
+    BCS = auto()    # Batch, Channel, Spatial - Common for PyTorch and ML packages.
+    BSC = auto()    # Batch, Spatial, Channel - common for OpenCV
+
+
 class VarianceMode(Enum):
     """
     Manages how the variance is computed in the WBOMeanVar class.

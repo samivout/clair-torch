@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 import clair_torch.common.general_functions
-from clair_torch.common.enums import ChannelOrder
+from clair_torch.common.enums import ChannelOrder, DimensionOrder
 import clair_torch.common.data_io as io
 
 
@@ -46,21 +46,24 @@ class TestLoadIcrfTxt:
             io.load_icrf_txt(temp_icrf_txt_file, source_channel_order=source_channel_order)
 
     @pytest.mark.parametrize("temp_icrf_txt_file", [np.tile([0.1, 0.2, 0.3], (256, 1)).astype(np.float32)], indirect=True)
-    @pytest.mark.parametrize("channel_order", [ChannelOrder.RGB, ChannelOrder.BGR, ChannelOrder.ANY], indirect=True)
-    def test_load_icrf_txt_success(self, tmp_path, temp_icrf_txt_file, channel_order):
+    @pytest.mark.parametrize("channel_order", [ChannelOrder.RGB, ChannelOrder.BGR, ChannelOrder.ANY])
+    @pytest.mark.parametrize("dimension_order", [DimensionOrder.BSC, DimensionOrder.BCS])
+    def test_load_icrf_txt_success(self, tmp_path, temp_icrf_txt_file, channel_order, dimension_order):
 
         reference_data_as_torch = torch.from_numpy(np.tile([0.1, 0.2, 0.3], (256, 1))).to(dtype=torch.float32)
-        reference_shape = reference_data_as_torch.shape
 
-        tensor = io.load_icrf_txt(temp_icrf_txt_file, source_channel_order=channel_order)
+        tensor = io.load_icrf_txt(temp_icrf_txt_file, source_channel_order=channel_order,
+                                  source_dimension_order=dimension_order)
+
+        if dimension_order == DimensionOrder.BSC:
+            reference_data_as_torch = torch.transpose(reference_data_as_torch, 0, 1)
+
+        if channel_order == ChannelOrder.BGR:
+            reference_data_as_torch = reference_data_as_torch[[2, 1, 0], :]
 
         assert isinstance(tensor, torch.Tensor)
-        assert reference_shape == tensor.shape
-
-        if channel_order == ChannelOrder.RGB or channel_order == ChannelOrder.ANY:
-            assert torch.allclose(reference_data_as_torch, tensor)
-        elif channel_order == ChannelOrder.BGR:
-            assert torch.allclose(reference_data_as_torch, tensor[:, ::-1])
+        assert reference_data_as_torch.shape == tensor.shape
+        assert torch.allclose(reference_data_as_torch, tensor)
 
 
 class TestLoadImage:
@@ -201,17 +204,19 @@ class TestSaveIcrfTxt:
             io.save_icrf_txt(bad_tensor, save_path)
 
     def test_save_icrf_txt_invalid_path(self):
-        icrf = torch.ones(256, 3)
+        icrf = torch.ones(3, 256)
         save_path = 111
         with pytest.raises(TypeCheckError):
             io.save_icrf_txt(icrf, save_path)
 
-    def test_save_icrf_txt_roundtrip(self, tmp_path):
-        icrf = torch.ones(256, 3) * 0.1
+    @pytest.mark.parametrize("channel_order", [ChannelOrder.RGB, ChannelOrder.BGR, ChannelOrder.ANY])
+    @pytest.mark.parametrize("dimension_order", [DimensionOrder.BSC, DimensionOrder.BCS])
+    def test_save_icrf_txt_roundtrip(self, tmp_path, channel_order, dimension_order):
+        icrf = torch.ones(3, 256) * 0.1
         save_path = tmp_path / "icrf.txt"
 
-        io.save_icrf_txt(icrf, save_path)
-        loaded_icrf = io.load_icrf_txt(save_path, ChannelOrder.BGR)
+        io.save_icrf_txt(icrf, save_path, channel_order, dimension_order)
+        loaded_icrf = io.load_icrf_txt(save_path, channel_order, dimension_order)
 
         assert torch.allclose(icrf, loaded_icrf)
 
