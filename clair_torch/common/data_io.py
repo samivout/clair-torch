@@ -13,7 +13,7 @@ import torch
 import numpy as np
 import cv2 as cv
 
-from clair_torch.common.transforms import Transform
+from clair_torch.common.transforms import BaseTransform
 from clair_torch.common.general_functions import cv_to_torch, normalize_container
 from clair_torch.common.enums import ChannelOrder
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
@@ -105,7 +105,8 @@ def load_principal_components(file_paths: list[str | Path]) -> torch.Tensor:
 
 
 @typechecked
-def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) -> torch.Tensor:
+def load_image(file_path: str | Path,
+               transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None) -> torch.Tensor:
     """
     Generic function to load a single image from the given path. Allows also the definition of transformations to be
     performed on the image before returning it upstream.
@@ -136,8 +137,9 @@ def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[
 
 
 @typechecked
-def load_video_frames_generator(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) \
-        -> torch.Tensor | None:
+def load_video_frames_generator(file_path: str | Path,
+                                transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None) \
+                                -> Generator[torch.Tensor | None, None, None]:
     """
     Function for loading frames from a video file through a generator.
     Args:
