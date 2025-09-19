@@ -2,7 +2,7 @@
 Module for transforms to be used with PyTorch tensors. Main use is for chaining required operations on in __getitem__
 of ImageDataset class.
 """
-from typing import Protocol, Optional, Any, Type, runtime_checkable, Iterable
+from typing import Optional, Any, Type, Iterable
 from abc import ABC, abstractmethod
 
 import torch
@@ -62,16 +62,6 @@ class BaseTransform(ABC):
             A new instance of this class.
         """
         return cls(**cfg)
-
-
-@runtime_checkable
-class Transform(Protocol):
-    """
-    Class stub for typing purposes. Used to indicate that a transform such as the ones in this module is required.
-    """
-
-    def __call__(self, x: torch.Tensor) -> torch.Tensor:
-        ...
 
 
 @_register_transform

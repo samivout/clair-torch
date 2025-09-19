@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 
 from typeguard import typechecked
 
-from clair_torch.common.transforms import Transform
+from clair_torch.common.transforms import BaseTransform
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
 
 
@@ -36,7 +36,7 @@ class BaseFileSettings(ABC):
     @typechecked
     def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
-                 cpu_transforms: Optional[Transform | Sequence[Transform]] = None):
+                 cpu_transforms: Optional[BaseTransform | Sequence[BaseTransform]] = None):
         """
         Initializes the instance with the given paths. Output and default roots are optional and defer to a default
         output root if None is given. output_path overrides any possible default_output_root values. Upon loading data
@@ -69,7 +69,7 @@ class BaseFileSettings(ABC):
         if cpu_transforms is not None and not isinstance(cpu_transforms, (list, tuple)):
             cpu_transforms = [cpu_transforms]
 
-        if cpu_transforms is not None and not all(isinstance(t, Transform) for t in cpu_transforms):
+        if cpu_transforms is not None and not all(isinstance(t, BaseTransform) for t in cpu_transforms):
             raise TypeError(f"At least one item in transforms is of incorrect type: {cpu_transforms}")
 
         self.cpu_transforms = cpu_transforms
@@ -93,7 +93,7 @@ class BaseFileSettings(ABC):
         pass
 
     @abstractmethod
-    def get_transforms(self) -> List[Transform] | None:
+    def get_transforms(self) -> List[BaseTransform] | None:
         """
         Method for getting the possible Transform operations from a FileSettings class.
         Returns:

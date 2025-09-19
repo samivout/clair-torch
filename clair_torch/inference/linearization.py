@@ -7,7 +7,8 @@ import torch
 from torch.utils.data import DataLoader
 from typeguard import typechecked
 
-from clair_torch.common import general_functions as gf, transforms as tr
+from clair_torch.common import general_functions as gf
+from clair_torch.common.transforms import BaseTransform
 from clair_torch.datasets.image_dataset import FlatFieldArtefactMapDataset, DarkFieldArtefactMapDataset, ImageMapDataset
 from clair_torch.models.base import ICRFModelBase
 
@@ -18,7 +19,7 @@ def linearize_dataset_generator(
         device: str | torch.device,
         icrf_model: ICRFModelBase,
         flatfield_dataset: Optional[FlatFieldArtefactMapDataset] = None,
-        gpu_transforms: Optional[tr.Transform | Sequence[tr.Transform]] = None,
+        gpu_transforms: Optional[BaseTransform | Sequence[BaseTransform]] = None,
         dark_field_dataset: Optional[DarkFieldArtefactMapDataset] = None
 ) -> Generator[tuple[torch.Tensor, torch.Tensor, dict], None, None]:
     """

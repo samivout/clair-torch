@@ -9,7 +9,7 @@ from typing import Iterable, Optional, Tuple, List, Sequence, Type, Callable
 from typeguard import typechecked
 
 from clair_torch.metadata.imaging_metadata import ImagingMetadata, BaseMetadata
-from clair_torch.common.transforms import Transform
+from clair_torch.common.transforms import BaseTransform
 from clair_torch.common.base import BaseFileSettings
 from clair_torch.common.data_io import _get_file_input_paths_by_pattern, _pair_main_and_std_files
 
@@ -27,7 +27,7 @@ class FileSettings(BaseFileSettings):
     @typechecked
     def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
-                 cpu_transforms: Optional[Transform | Iterable[Transform]] = None):
+                 cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None):
         """
         Initializes the instance with the given paths. Output and default roots are optional and defer to a default
         output root if None is given. output_path overrides any possible default_output_root values. Upon loading data
@@ -67,7 +67,7 @@ class FileSettings(BaseFileSettings):
 
         return std_output_path
 
-    def get_transforms(self) -> List[Transform] | None:
+    def get_transforms(self) -> List[BaseTransform] | None:
         """
         Method for getting the possible Transform operations to be performed on the data upon reading it.
         Returns:
@@ -114,7 +114,7 @@ class FrameSettings(FileSettings):
     @typechecked
     def __init__(self, input_path: str | Path, output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
-                 cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
+                 cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
                  metadata_cls: Type[BaseMetadata] = ImagingMetadata,
                  *metadata_args, **metadata_kwargs):
         super().__init__(input_path, output_path, default_output_root, cpu_transforms)
@@ -184,8 +184,8 @@ class PairedFileSettings(FileSettings):
                  val_output_path: Optional[str | Path] = None,
                  std_output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
-                 val_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
-                 std_cpu_transforms: Optional[Transform | Iterable[Transform]] = None):
+                 val_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
+                 std_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None):
         """
         Initializes a PairedFileSettings object with the given paths. The class both inherits from FileSettings and is
         a composition of two instances of FileSettings. Referring to self.val_input_path is the same as referring to
@@ -240,7 +240,7 @@ class PairedFileSettings(FileSettings):
         """
         return self.val_settings.get_output_paths(), self.std_settings.get_output_paths()
 
-    def get_transforms(self) -> Tuple[List[Transform], List[Transform]]:
+    def get_transforms(self) -> Tuple[List[BaseTransform], List[BaseTransform]]:
         """
         Method for getting the transformation operations. Overrides the inherited method by deferring the process for
         the two encapsulated instances.
@@ -268,8 +268,8 @@ class PairedFrameSettings(PairedFileSettings):
     def __init__(self, val_input_path: str | Path, std_input_path: Optional[str | Path] = None,
                  val_output_path: Optional[str | Path] = None, std_output_path: Optional[str | Path] = None,
                  default_output_root: Optional[str | Path] = None,
-                 val_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
-                 std_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
+                 val_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
+                 std_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
                  parse_std_meta: bool = False, metadata_cls: Type[BaseMetadata] = ImagingMetadata,
                  *metadata_args, **metadata_kwargs):
         """
@@ -355,8 +355,8 @@ def file_settings_constructor(
     file_pattern: str,
     recursive: bool = False,
     default_output_root: Optional[Path] = None,
-    val_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
-    std_cpu_transforms: Optional[Transform | Iterable[Transform]] = None,
+    val_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
+    std_cpu_transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None,
     metadata_cls: Optional[Type[BaseMetadata]] = None,
     strict_exclusive: bool = True,
     *metadata_args,

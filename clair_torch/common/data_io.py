@@ -5,7 +5,7 @@ other functions, classes etc. in this project.
 """
 
 from pathlib import Path
-from typing import Optional, Iterable, Sequence
+from typing import Optional, Iterable, Sequence, Generator
 import yaml
 
 from typeguard import typechecked
@@ -13,20 +13,22 @@ import torch
 import numpy as np
 import cv2 as cv
 
-from clair_torch.common.transforms import Transform
+from clair_torch.common.transforms import BaseTransform
 from clair_torch.common.general_functions import cv_to_torch, normalize_container
-from clair_torch.common.enums import ChannelOrder
+from clair_torch.common.enums import ChannelOrder, DimensionOrder
 from clair_torch.validation.io_checks import validate_input_file_path, is_potentially_valid_file_path
 
 
 @typechecked
-def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = ChannelOrder.BGR) -> torch.Tensor:
+def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = ChannelOrder.BGR,
+                  source_dimension_order: DimensionOrder = DimensionOrder.BSC) -> torch.Tensor:
     """
     Utility function for loading an inverse camera response function from a .txt file. Expects a 2D NumPy array
     with shape (N, C), with N representing the number of datapoints
     Args:
         path: path to the text file containing the ICRF data.
         source_channel_order: the order in which the channels are expected to be in the file.
+        source_dimension_order: the order in which the dimensions are expected to be in the file.
 
     Returns:
         torch.Tensor representing the ICRF.
@@ -37,32 +39,37 @@ def load_icrf_txt(path: str | Path, source_channel_order: ChannelOrder = Channel
     validate_input_file_path(path, suffix=".txt")
 
     try:
-        data = np.loadtxt(path)  # shape: (256, 3), BGR order
+        data = torch.from_numpy(np.loadtxt(path)).float()  # shape: (256, 3), BGR order
     except Exception as e:
         raise IOError(f'Failed to load NumPy array from {path}: {e}')
 
+    if source_dimension_order == DimensionOrder.BCS:
+        pass
+    elif source_dimension_order == DimensionOrder.BSC:
+        data = torch.transpose(data, 0, 1)
+
     # No change for any and RGB ordering.
     if source_channel_order == ChannelOrder.ANY or source_channel_order == ChannelOrder.RGB:
-        data_rgb = data
+        pass
     # Reverse BGR order into RGB order.
     elif source_channel_order == ChannelOrder.BGR:
-        data_rgb = data[:, ::-1].copy()  # shape: (256, 3)
+        data = data[[2, 1, 0], :]
     # Raise value error for unknown channel ordering.
     else:
         raise ValueError(f"Unknown channel order {source_channel_order}:")
 
-    # Convert to PyTorch tensor
-    icrf_tensor = torch.from_numpy(data_rgb).float()
-
-    return icrf_tensor
+    return data
 
 
 @typechecked
-def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
+def save_icrf_txt(icrf: torch.Tensor, path: str | Path, target_channel_order: ChannelOrder = ChannelOrder.BGR,
+                  target_dimension_order: DimensionOrder = DimensionOrder.BSC) -> None:
     """
     Utility function to save an ICRF into a .txt file of the given filepath.
     Args:
         icrf: the ICRF tensor.
+        target_channel_order: the order in which the channels are to be in the saved data.
+        target_dimension_order: the order in which the dimensions are to be in the saved data.
         path: the filepath where to save the file.
 
     Returns:
@@ -72,8 +79,18 @@ def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
     if not is_potentially_valid_file_path(path):
         raise IOError(f"Invalid path for your OS: {path}")
 
-    data = icrf.detach().cpu().numpy()
-    data = data[:, ::-1]
+    data = icrf.detach().cpu()
+    if target_channel_order == ChannelOrder.RGB:
+        pass
+    elif target_channel_order == ChannelOrder.BGR:
+        data = data[[2, 1, 0], :]
+
+    if target_dimension_order == DimensionOrder.BCS:
+        pass
+    elif target_dimension_order == DimensionOrder.BSC:
+        data = torch.transpose(data, 0, 1)
+
+    data = data.numpy()
 
     try:
         np.savetxt(path, data)
@@ -86,7 +103,7 @@ def save_icrf_txt(icrf: torch.Tensor, path: str | Path) -> None:
 @typechecked
 def load_principal_components(file_paths: list[str | Path]) -> torch.Tensor:
     """
-    Loads principal component data from text files, one per color channel. The files in the input paths should be
+    Loads principal component data from text files, one file per color channel. The files in the input paths should be
     ordered in the desired channel order. E.g. for RGB images it should point to the red, green and blue files in order.
 
     Args:
@@ -105,7 +122,8 @@ def load_principal_components(file_paths: list[str | Path]) -> torch.Tensor:
 
 
 @typechecked
-def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) -> torch.Tensor:
+def load_image(file_path: str | Path,
+               transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None) -> torch.Tensor:
     """
     Generic function to load a single image from the given path. Allows also the definition of transformations to be
     performed on the image before returning it upstream.
@@ -123,10 +141,11 @@ def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[
 
     try:
         image = cv.imread(str(file_path), cv.IMREAD_UNCHANGED)
-        image = torch.from_numpy(image)
-        image = cv_to_torch(image)
     except Exception as e:
         raise IOError(f"Failed to load NumPy array from {file_path}: {e}")
+
+    image = torch.from_numpy(image)
+    image = cv_to_torch(image)
 
     if transforms:
         for transform in transforms:
@@ -136,8 +155,9 @@ def load_image(file_path: str | Path, transforms: Optional[Transform | Iterable[
 
 
 @typechecked
-def load_video_frames_generator(file_path: str | Path, transforms: Optional[Transform | Iterable[Transform]] = None) \
-        -> torch.Tensor | None:
+def load_video_frames_generator(file_path: str | Path,
+                                transforms: Optional[BaseTransform | Iterable[BaseTransform]] = None) \
+                                -> Generator[torch.Tensor | None, None, None]:
     """
     Function for loading frames from a video file through a generator.
     Args:
@@ -145,7 +165,7 @@ def load_video_frames_generator(file_path: str | Path, transforms: Optional[Tran
         transforms: optional list of transform operations to perform on each frame before yielding them.
 
     Returns:
-
+        Generator, which yields torch.Tensors.
     """
     validate_input_file_path(file_path, suffix=None)
 
@@ -168,7 +188,7 @@ def load_video_frames_generator(file_path: str | Path, transforms: Optional[Tran
     cap.release()
 
 
-def _get_frame_count(file_path: str | Path):
+def _get_frame_count(file_path: str | Path) -> int:
     """
     Utility function to get the number of frames in a video file.
     Args:
@@ -219,7 +239,8 @@ def save_image(tensor: torch.Tensor, image_save_path: str | Path, dtype: np.dtyp
 
 
 @typechecked
-def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*", recursive_search: bool = False) -> list[Path]:
+def _get_file_input_paths_by_pattern(search_root: str | Path, pattern: str = f"*", recursive_search: bool = False)\
+        -> list[Path]:
     """
     Utility function to collect all filepaths of the given file suffix. Optionally allows recursive search of the
     subdirectories of the given search_root.

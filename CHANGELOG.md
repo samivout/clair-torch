@@ -4,7 +4,8 @@
 
 ### Added
 
-- Introduced `Typeguard` for runtime type validation, which can be configureg on/off via environment variables.
+- Introduced `Typeguard` for runtime type validation, which can be configured on/off via environment variables.
+- `DimensionOrder` enum class for controlling the order of dimensions at IO boundaries.
 
 ### Fixed
 
@@ -13,6 +14,11 @@
 ### Changed
 
 - References to `.validation.type_checks.validate_all` removed in favor of `Typeguard` decorator checks.
+- In `losses.py` and `ICRFModelBase` and its subclasses, changed the internal channel ordering of the data from (n_points, channels) dimension order to (channels, n_points).
+
+### Removed
+
+- Removed Protocol based Transforms, preferring BaseTransform for type hints and as base for writing Transform classes.
 
 ## [0.2.0]
 

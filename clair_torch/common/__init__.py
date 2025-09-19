@@ -11,7 +11,7 @@ from .enums import InterpMode, MissingStdMode, ChannelOrder, VarianceMode
 from .file_settings import FileSettings, PairedFileSettings, FrameSettings, PairedFrameSettings, file_settings_constructor, group_frame_settings_by_attributes
 from .general_functions import weighted_mean_and_std, flat_field_mean, flatfield_correction, get_valid_exposure_pairs, get_pairwise_valid_pixel_mask, cv_to_torch, torch_to_cv, normalize_tensor, clamp_along_dims, conditional_gaussian_blur, cli_parse_args_from_config
 from .statistics import WBOMean, WBOMeanVar
-from .transforms import Transform, CvToTorch, TorchToCv, CastTo, ClampAlongDims, Normalize, StridedDownscale
+from .transforms import BaseTransform, CvToTorch, TorchToCv, CastTo, ClampAlongDims, Normalize, StridedDownscale
 
 __all__ = [
     "BaseFileSettings",
@@ -30,6 +30,6 @@ __all__ = [
 
     "WBOMean", "WBOMeanVar",
 
-    "Transform", "CvToTorch", "TorchToCv", "CastTo", "ClampAlongDims", "Normalize",
+    "BaseTransform", "CvToTorch", "TorchToCv", "CastTo", "ClampAlongDims", "Normalize",
     "StridedDownscale"
 ]
