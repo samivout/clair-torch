@@ -1,0 +1,2494 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../common/">
+      
+      
+        <link rel="next" href="../inference/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Datasets - camera-linearity-torch docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#datasets" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="camera-linearity-torch docs" class="md-header__button md-logo" aria-label="camera-linearity-torch docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            camera-linearity-torch docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Datasets
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="camera-linearity-torch docs" class="md-nav__button md-logo" aria-label="camera-linearity-torch docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    camera-linearity-torch docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Welcome to clair-torch
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../common/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Common
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Datasets
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Datasets
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      datasets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.FlatFieldArtefactMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlatFieldArtefactMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FlatFieldArtefactMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.FlatFieldArtefactMapDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.ImageMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      ImageMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ImageMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.ImageMapDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileIterDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiFileIterDataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiFileMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MultiFileMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.__getitem__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __getitem__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.__len__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __len__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.preload_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      preload_dataset
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      VideoIterableDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VideoIterableDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="__init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__init__--todo-add-handling-for-std-files-along-the-main-value-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      TODO: add handling for std files along the main value files.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__iter__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __iter__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.custom_collate" class="md-nav__link">
+    <span class="md-ellipsis">
+      custom_collate
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metadata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Metadata
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Models
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../summary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Training
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../validation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Validation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Visualization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      datasets
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.FlatFieldArtefactMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      FlatFieldArtefactMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FlatFieldArtefactMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.FlatFieldArtefactMapDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.ImageMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      ImageMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ImageMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.ImageMapDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileIterDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiFileIterDataset
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      MultiFileMapDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MultiFileMapDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.__getitem__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __getitem__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.__len__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __len__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.MultiFileMapDataset.preload_dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      preload_dataset
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      VideoIterableDataset
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="VideoIterableDataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__init__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __init__
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="__init__">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__init__--todo-add-handling-for-std-files-along-the-main-value-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      TODO: add handling for std files along the main value files.
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clair_torch.datasets.VideoIterableDataset.__iter__" class="md-nav__link">
+    <span class="md-ellipsis">
+      __iter__
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clair_torch.datasets.custom_collate" class="md-nav__link">
+    <span class="md-ellipsis">
+      custom_collate
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="datasets">Datasets</h1>
+<p>This page acts as the technical reference for the datasets subpackage.</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="clair_torch.datasets"></a>
+    <div class="doc doc-contents first">
+
+        <p>The datasets subpackage provides dataset classes, which can be used with the PyTorch Dataloader class for managing the
+data loading process in functions.</p>
+
+
+
+
+
+
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clair_torch.datasets.FlatFieldArtefactMapDataset" class="doc doc-heading">
+            <code>FlatFieldArtefactMapDataset</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="clair_torch.datasets.base.MultiFileArtefactMapDataset">MultiFileArtefactMapDataset</span></code></p>
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>clair_torch/datasets/image_dataset.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FlatFieldArtefactMapDataset</span><span class="p">(</span><span class="n">MultiFileArtefactMapDataset</span><span class="p">):</span>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">copy_preloaded_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">missing_std_mode</span><span class="p">:</span> <span class="n">MissingStdMode</span> <span class="o">=</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">attributes_to_match</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="p">:</span> <span class="n">MissingValMode</span> <span class="o">=</span> <span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                 <span class="n">default_get_item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dataset class for handling calibration images. Currently, mainly used for flat-field correction.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            attributes_to_match:</span>
+<span class="sd">            copy_preloaded_data:</span>
+<span class="sd">            files: list of FrameSettings objects composing the dataset of calibration images.</span>
+<span class="sd">            missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.</span>
+<span class="sd">            missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">                uncertainty images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Workaround for mutable default argument.</span>
+        <span class="k">if</span> <span class="n">attributes_to_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes_to_match</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;magnification&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;illumination&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="n">copy_preloaded_data</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">missing_std_mode</span><span class="p">,</span>
+                         <span class="n">missing_std_value</span><span class="o">=</span><span class="n">missing_std_value</span><span class="p">,</span> <span class="n">attributes_to_match</span><span class="o">=</span><span class="n">attributes_to_match</span><span class="p">,</span>
+                         <span class="n">cache_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">missing_val_mode</span><span class="p">,</span>
+                         <span class="n">default_get_item_key</span><span class="o">=</span><span class="n">default_get_item_key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_matching_image_settings_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference_image_settings</span><span class="p">:</span> <span class="n">FrameSettings</span><span class="p">,</span>
+                                         <span class="n">matching_attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Internal helper method for getting a matching FrameSettings object. If no matches are found, returns None.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            reference_image_settings: the FrameSettings object for which to find a match.</span>
+<span class="sd">            matching_attributes: the attributes that should match between the reference and one of the FrameSettings</span>
+<span class="sd">                contained.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            If a match is found, returns the index of that FrameSettings object. If no matches are found, returns None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">image_settings</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">):</span>
+
+            <span class="k">if</span> <span class="n">image_settings</span><span class="o">.</span><span class="n">is_match</span><span class="p">(</span><span class="n">reference_image_settings</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">matching_attributes</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">i</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.FlatFieldArtefactMapDataset.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">attributes_to_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span> <span class="n">default_get_item_key</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Dataset class for handling calibration images. Currently, mainly used for flat-field correction.
+Args:
+    attributes_to_match:
+    copy_preloaded_data:
+    files: list of FrameSettings objects composing the dataset of calibration images.
+    missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.
+    missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing
+        uncertainty images.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/image_dataset.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">copy_preloaded_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="n">missing_std_mode</span><span class="p">:</span> <span class="n">MissingStdMode</span> <span class="o">=</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+             <span class="n">attributes_to_match</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+             <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="p">:</span> <span class="n">MissingValMode</span> <span class="o">=</span> <span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+             <span class="n">default_get_item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataset class for handling calibration images. Currently, mainly used for flat-field correction.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        attributes_to_match:</span>
+<span class="sd">        copy_preloaded_data:</span>
+<span class="sd">        files: list of FrameSettings objects composing the dataset of calibration images.</span>
+<span class="sd">        missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.</span>
+<span class="sd">        missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">            uncertainty images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Workaround for mutable default argument.</span>
+    <span class="k">if</span> <span class="n">attributes_to_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attributes_to_match</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;magnification&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;illumination&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="n">copy_preloaded_data</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">missing_std_mode</span><span class="p">,</span>
+                     <span class="n">missing_std_value</span><span class="o">=</span><span class="n">missing_std_value</span><span class="p">,</span> <span class="n">attributes_to_match</span><span class="o">=</span><span class="n">attributes_to_match</span><span class="p">,</span>
+                     <span class="n">cache_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">missing_val_mode</span><span class="p">,</span>
+                     <span class="n">default_get_item_key</span><span class="o">=</span><span class="n">default_get_item_key</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clair_torch.datasets.ImageMapDataset" class="doc doc-heading">
+            <code>ImageMapDataset</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><a class="autorefs autorefs-internal" title="MultiFileMapDataset (clair_torch.datasets.base.MultiFileMapDataset)" href="#clair_torch.datasets.MultiFileMapDataset">MultiFileMapDataset</a></code></p>
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>clair_torch/datasets/image_dataset.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ImageMapDataset</span><span class="p">(</span><span class="n">MultiFileMapDataset</span><span class="p">):</span>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">copy_preloaded_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">missing_std_mode</span><span class="p">:</span> <span class="n">MissingStdMode</span> <span class="o">=</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span>
+                 <span class="n">missing_std_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">default_get_item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
+                 <span class="n">missing_val_mode</span><span class="p">:</span> <span class="n">MissingValMode</span> <span class="o">=</span> <span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        ImageDataset is the master image data object. The files attribute holds a list of FileSettings-based objects.</span>
+<span class="sd">        The image tensors shapes are (C, H, W), that is number of channels, height and width. Through a DataLoader the</span>
+<span class="sd">        shape is expanded into (N, C, H, W) with N standing for the number of images in the batch.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            files: list of the FileSettings-based objects composing the dataset.</span>
+<span class="sd">            copy_preloaded_data: whether preloaded data should be returned as a new copy or as a reference to the</span>
+<span class="sd">                preloaded data contained in self._preloaded_dataset.</span>
+<span class="sd">            missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.</span>
+<span class="sd">            missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">                uncertainty images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="n">copy_preloaded_data</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">missing_std_mode</span><span class="p">,</span>
+                         <span class="n">missing_std_value</span><span class="o">=</span><span class="n">missing_std_value</span><span class="p">,</span> <span class="n">default_getitem_key</span><span class="o">=</span><span class="n">default_get_item_key</span><span class="p">,</span>
+                         <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">missing_val_mode</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.ImageMapDataset.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">default_get_item_key</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>ImageDataset is the master image data object. The files attribute holds a list of FileSettings-based objects.
+The image tensors shapes are (C, H, W), that is number of channels, height and width. Through a DataLoader the
+shape is expanded into (N, C, H, W) with N standing for the number of images in the batch.
+Args:
+    files: list of the FileSettings-based objects composing the dataset.
+    copy_preloaded_data: whether preloaded data should be returned as a new copy or as a reference to the
+        preloaded data contained in self._preloaded_dataset.
+    missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.
+    missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing
+        uncertainty images.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/image_dataset.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@typechecked</span>
+<span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">copy_preloaded_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="n">missing_std_mode</span><span class="p">:</span> <span class="n">MissingStdMode</span> <span class="o">=</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span>
+             <span class="n">missing_std_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">default_get_item_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span>
+             <span class="n">missing_val_mode</span><span class="p">:</span> <span class="n">MissingValMode</span> <span class="o">=</span> <span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ImageDataset is the master image data object. The files attribute holds a list of FileSettings-based objects.</span>
+<span class="sd">    The image tensors shapes are (C, H, W), that is number of channels, height and width. Through a DataLoader the</span>
+<span class="sd">    shape is expanded into (N, C, H, W) with N standing for the number of images in the batch.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        files: list of the FileSettings-based objects composing the dataset.</span>
+<span class="sd">        copy_preloaded_data: whether preloaded data should be returned as a new copy or as a reference to the</span>
+<span class="sd">            preloaded data contained in self._preloaded_dataset.</span>
+<span class="sd">        missing_std_mode: how missing uncertainty images should be dealt with. Read more in .enums.MissingStdMode.</span>
+<span class="sd">        missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">            uncertainty images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">,</span> <span class="n">copy_preloaded_data</span><span class="o">=</span><span class="n">copy_preloaded_data</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">missing_std_mode</span><span class="p">,</span>
+                     <span class="n">missing_std_value</span><span class="o">=</span><span class="n">missing_std_value</span><span class="p">,</span> <span class="n">default_getitem_key</span><span class="o">=</span><span class="n">default_get_item_key</span><span class="p">,</span>
+                     <span class="n">missing_val_mode</span><span class="o">=</span><span class="n">missing_val_mode</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clair_torch.datasets.MultiFileIterDataset" class="doc doc-heading">
+            <code>MultiFileIterDataset</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.utils.data.IterableDataset">IterableDataset</span></code>, <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>A generic base class for iterable-style Dataset classes. Dataset classes must manage files via a concrete
+implementation of the generic base FileSettings class.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>clair_torch/datasets/base.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MultiFileIterDataset</span><span class="p">(</span><span class="n">IterableDataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generic base class for iterable-style Dataset classes. Dataset classes must manage files via a concrete</span>
+<span class="sd">    implementation of the generic base FileSettings class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">]):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">files</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clair_torch.datasets.MultiFileMapDataset" class="doc doc-heading">
+            <code>MultiFileMapDataset</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.utils.data.Dataset">Dataset</span></code>, <code><span title="abc.ABC">ABC</span></code></p>
+
+
+        <p>A generic base class for map-style Dataset classes. Dataset classes must manage files via a concrete implementation
+of the generic base FileSettings class.</p>
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>clair_torch/datasets/base.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MultiFileMapDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A generic base class for map-style Dataset classes. Dataset classes must manage files via a concrete implementation</span>
+<span class="sd">    of the generic base FileSettings class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@typechecked</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">FrameSettings</span> <span class="o">|</span> <span class="n">PairedFrameSettings</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">copy_preloaded_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">missing_std_mode</span><span class="p">:</span> <span class="n">MissingStdMode</span> <span class="o">=</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">default_getitem_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raw&quot;</span><span class="p">,</span> <span class="n">missing_val_mode</span><span class="p">:</span> <span class="n">MissingValMode</span> <span class="o">=</span> <span class="n">MissingValMode</span><span class="o">.</span><span class="n">ERROR</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="n">files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">copy_preloaded_data</span> <span class="o">=</span> <span class="n">copy_preloaded_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">=</span> <span class="n">missing_std_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_value</span> <span class="o">=</span> <span class="n">missing_std_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">missing_std_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_val_mode</span> <span class="o">=</span> <span class="n">missing_val_mode</span>
+
+        <span class="c1"># Create a dictionary of numeric metadata keys, based on which to create lists of indices of the files in</span>
+        <span class="c1"># self.file based on the sorting of each key.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Insert a raw sorting order in the indices.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">default_getitem_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The default access key </span><span class="si">{</span><span class="n">default_getitem_key</span><span class="si">}</span><span class="s2"> is not found in the dataset.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_getitem_key</span> <span class="o">=</span> <span class="n">default_getitem_key</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The length of the dataset is defined as the number of files in it manages.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int representing the number of files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method loads images from disk with OpenCV, converts them to PyTorch tensors, runs them through the given</span>
+<span class="sd">        transformations, finally returning the image tensor and a scalar tensor of the exposure time. It also falls</span>
+<span class="sd">        back on the preloaded tensors if they are available. This method should be used as the main way to access the</span>
+<span class="sd">        tensors.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            key: index of the item to get.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple (tensor, tensor | None, dict[str, float | int]), representing the value image, optional uncertainty</span>
+<span class="sd">            image and a numeric metadata dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Support (idx, meta_key) indexing</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected (index, meta_key) for tuple indexing.&quot;</span><span class="p">)</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">meta_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">idx</span><span class="p">,</span> <span class="n">meta_key</span> <span class="o">=</span> <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_getitem_key</span>
+
+        <span class="c1"># Resolve sorted index</span>
+        <span class="n">sorted_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">[</span><span class="n">meta_key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="c1"># Utilize the preloaded dataset if it exists.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">indices</span><span class="p">,</span> <span class="n">val_tensors</span><span class="p">,</span> <span class="n">std_tensors</span><span class="p">,</span> <span class="n">numeric_metadatas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_preloaded_data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">val_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">std_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">numeric_metadatas</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">val_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">std_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">numeric_metadatas</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span>
+
+        <span class="c1"># Load images normally</span>
+        <span class="n">val_image</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">numeric_metadatas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_value_and_std_image</span><span class="p">(</span><span class="n">sorted_idx</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sorted_idx</span><span class="p">,</span> <span class="n">val_image</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">numeric_metadatas</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_value_and_std_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> \
+            <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shared image loading function that handles the loading of both the value images and uncertainty images and the</span>
+<span class="sd">        numeric metadata.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            idx: index of the managed file to load images off of.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (tensor, tensor | None, dict) representing the value image, possible uncertainty image and numeric</span>
+<span class="sd">            metadata dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file_settings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">input_paths</span> <span class="o">=</span> <span class="n">file_settings</span><span class="o">.</span><span class="n">get_input_paths</span><span class="p">()</span>
+        <span class="n">transforms</span> <span class="o">=</span> <span class="n">file_settings</span><span class="o">.</span><span class="n">get_transforms</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">val_transforms</span><span class="p">,</span> <span class="n">std_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+            <span class="n">std_transforms</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_paths</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">val_path</span><span class="p">,</span> <span class="n">std_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+            <span class="n">std_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">val_image</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">val_path</span><span class="p">,</span> <span class="n">val_transforms</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">std_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">std_image</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">std_path</span><span class="p">,</span> <span class="n">std_transforms</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">val_image</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">MULTIPLIER</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="n">val_image</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported MissingStdMode: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">numeric_metadata</span> <span class="o">=</span> <span class="n">file_settings</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">val_image</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">numeric_metadata</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">preload_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all data from disk into memory and stores them as a tuple of lists of tensors in self._preloaded_dataset.</span>
+<span class="sd">        This method utilizes the __getitem__ method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">val_tensors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">std_tensors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">numeric_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">val_tensor</span><span class="p">,</span> <span class="n">std_tensor</span><span class="p">,</span> <span class="n">numeric_metadata_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">val_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val_tensor</span><span class="p">)</span>
+            <span class="n">std_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_tensor</span><span class="p">)</span>
+            <span class="n">numeric_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numeric_metadata_tensor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span> <span class="o">=</span> <span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">val_tensors</span><span class="p">,</span> <span class="n">std_tensors</span><span class="p">,</span> <span class="n">numeric_metadata</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_closest_frame_settings_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference_frame_settings</span><span class="p">:</span> <span class="n">FrameSettings</span><span class="p">,</span> <span class="n">attribute</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Method for getting the closest possible match from the dataset for a given reference FrameSettings instance as</span>
+<span class="sd">        determined by the given attribute.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            reference_frame_settings: the FrameSettings instance for which to find the closest match.</span>
+<span class="sd">            attribute: the attribute based on which the match is searched for.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The index of the closest matching FrameSettings instance in this dataset, or None if dataset is empty.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="o">...</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.MultiFileMapDataset.__getitem__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>This method loads images from disk with OpenCV, converts them to PyTorch tensors, runs them through the given
+transformations, finally returning the image tensor and a scalar tensor of the exposure time. It also falls
+back on the preloaded tensors if they are available. This method should be used as the main way to access the
+tensors.
+Args:
+    key: index of the item to get.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="int">int</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A tuple (tensor, tensor | None, dict[str, float | int]), representing the value image, optional uncertainty</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.Tensor">Tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>image and a numeric metadata dictionary.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/base.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method loads images from disk with OpenCV, converts them to PyTorch tensors, runs them through the given</span>
+<span class="sd">    transformations, finally returning the image tensor and a scalar tensor of the exposure time. It also falls</span>
+<span class="sd">    back on the preloaded tensors if they are available. This method should be used as the main way to access the</span>
+<span class="sd">    tensors.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        key: index of the item to get.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple (tensor, tensor | None, dict[str, float | int]), representing the value image, optional uncertainty</span>
+<span class="sd">        image and a numeric metadata dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Support (idx, meta_key) indexing</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected (index, meta_key) for tuple indexing.&quot;</span><span class="p">)</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">meta_key</span> <span class="o">=</span> <span class="n">key</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">idx</span><span class="p">,</span> <span class="n">meta_key</span> <span class="o">=</span> <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_getitem_key</span>
+
+    <span class="c1"># Resolve sorted index</span>
+    <span class="n">sorted_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_indices</span><span class="p">[</span><span class="n">meta_key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1"># Utilize the preloaded dataset if it exists.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">indices</span><span class="p">,</span> <span class="n">val_tensors</span><span class="p">,</span> <span class="n">std_tensors</span><span class="p">,</span> <span class="n">numeric_metadatas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_preloaded_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">val_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">std_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">(),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">numeric_metadatas</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">val_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">std_tensors</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">],</span> <span class="n">numeric_metadatas</span><span class="p">[</span><span class="n">sorted_idx</span><span class="p">]</span>
+
+    <span class="c1"># Load images normally</span>
+    <span class="n">val_image</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">numeric_metadatas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_value_and_std_image</span><span class="p">(</span><span class="n">sorted_idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sorted_idx</span><span class="p">,</span> <span class="n">val_image</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">numeric_metadatas</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.MultiFileMapDataset.__len__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__len__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>The length of the dataset is defined as the number of files in it manages.
+Returns:
+    int representing the number of files.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/base.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The length of the dataset is defined as the number of files in it manages.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int representing the number of files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.MultiFileMapDataset.preload_dataset" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">preload_dataset</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Loads all data from disk into memory and stores them as a tuple of lists of tensors in self._preloaded_dataset.
+This method utilizes the <strong>getitem</strong> method.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/base.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">preload_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads all data from disk into memory and stores them as a tuple of lists of tensors in self._preloaded_dataset.</span>
+<span class="sd">    This method utilizes the __getitem__ method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">val_tensors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">std_tensors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">numeric_metadata</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+        <span class="n">index</span><span class="p">,</span> <span class="n">val_tensor</span><span class="p">,</span> <span class="n">std_tensor</span><span class="p">,</span> <span class="n">numeric_metadata_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">val_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val_tensor</span><span class="p">)</span>
+        <span class="n">std_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">std_tensor</span><span class="p">)</span>
+        <span class="n">numeric_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numeric_metadata_tensor</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">preloaded_dataset</span> <span class="o">=</span> <span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">val_tensors</span><span class="p">,</span> <span class="n">std_tensors</span><span class="p">,</span> <span class="n">numeric_metadata</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="clair_torch.datasets.VideoIterableDataset" class="doc doc-heading">
+            <code>VideoIterableDataset</code>
+
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.utils.data.IterableDataset">IterableDataset</span></code></p>
+
+
+
+
+
+
+
+
+
+              <details class="quote">
+                <summary>Source code in <code>clair_torch/datasets/video_frame_dataset.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">VideoIterableDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">IterableDataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_settings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FrameSettings</span><span class="p">],</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span>
+                 <span class="n">missing_std_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        # TODO: add handling for std files along the main value files.</span>
+<span class="sd">        Dataset class for video files. Treats all encompassed files as a single dataset, jumping smoothly from one file</span>
+<span class="sd">        to the next upon exhausting the frames from one file.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            frame_settings: list of FrameSettings objects composing the dataset.</span>
+<span class="sd">            missing_std_mode: enum flag determining how missing uncertainty images should be handled.</span>
+<span class="sd">            missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">                uncertainty images.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame_settings</span> <span class="o">=</span> <span class="n">frame_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">=</span> <span class="n">missing_std_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">missing_std_value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">number_of_frames</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">frame_setting</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_settings</span><span class="p">:</span>
+            <span class="n">number_of_frames</span> <span class="o">+=</span> <span class="n">frame_setting</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()[</span><span class="s2">&quot;number_of_frames&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">number_of_frames</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access method for the frames of this dataset. Iterates through the files and frames, moving on to the next file</span>
+<span class="sd">        upon exhausting a file.</span>
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">settings</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_settings</span><span class="p">:</span>
+
+            <span class="n">input_paths</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_input_paths</span><span class="p">()</span>
+            <span class="n">transforms</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_transforms</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_paths</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+                <span class="n">val_path</span><span class="p">,</span> <span class="n">std_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+                <span class="n">std_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+                <span class="n">val_transforms</span><span class="p">,</span> <span class="n">std_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+                <span class="n">std_transforms</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">load_video_frames_generator</span><span class="p">(</span><span class="n">val_path</span><span class="p">,</span> <span class="n">val_transforms</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                    <span class="n">std_image</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+                    <span class="n">std_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">MULTIPLIER</span><span class="p">:</span>
+                    <span class="n">std_image</span> <span class="o">=</span> <span class="n">frame</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported MissingStdMode: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">metadata</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.VideoIterableDataset.__init__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">frame_settings</span><span class="p">,</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span> <span class="n">missing_std_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <h4 id="clair_torch.datasets.VideoIterableDataset.__init__--todo-add-handling-for-std-files-along-the-main-value-files">TODO: add handling for std files along the main value files.</h4>
+<p>Dataset class for video files. Treats all encompassed files as a single dataset, jumping smoothly from one file
+to the next upon exhausting the frames from one file.
+Args:
+    frame_settings: list of FrameSettings objects composing the dataset.
+    missing_std_mode: enum flag determining how missing uncertainty images should be handled.
+    missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing
+        uncertainty images.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/video_frame_dataset.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_settings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FrameSettings</span><span class="p">],</span> <span class="n">missing_std_mode</span><span class="o">=</span><span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">,</span>
+             <span class="n">missing_std_value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    # TODO: add handling for std files along the main value files.</span>
+<span class="sd">    Dataset class for video files. Treats all encompassed files as a single dataset, jumping smoothly from one file</span>
+<span class="sd">    to the next upon exhausting the frames from one file.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        frame_settings: list of FrameSettings objects composing the dataset.</span>
+<span class="sd">        missing_std_mode: enum flag determining how missing uncertainty images should be handled.</span>
+<span class="sd">        missing_std_value: a constant that is used in a manner defined by the missing_std_mode to deal with missing</span>
+<span class="sd">            uncertainty images.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">frame_settings</span> <span class="o">=</span> <span class="n">frame_settings</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">=</span> <span class="n">missing_std_mode</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">missing_std_value</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="clair_torch.datasets.VideoIterableDataset.__iter__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__iter__</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Access method for the frames of this dataset. Iterates through the files and frames, moving on to the next file
+upon exhausting a file.
+Returns:</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/video_frame_dataset.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Access method for the frames of this dataset. Iterates through the files and frames, moving on to the next file</span>
+<span class="sd">    upon exhausting a file.</span>
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">settings</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_settings</span><span class="p">:</span>
+
+        <span class="n">input_paths</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_input_paths</span><span class="p">()</span>
+        <span class="n">transforms</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_transforms</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_paths</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+            <span class="n">val_path</span><span class="p">,</span> <span class="n">std_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val_path</span> <span class="o">=</span> <span class="n">input_paths</span>
+            <span class="n">std_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">):</span>
+            <span class="n">val_transforms</span><span class="p">,</span> <span class="n">std_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">val_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+            <span class="n">std_transforms</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">get_numeric_metadata</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">load_video_frames_generator</span><span class="p">(</span><span class="n">val_path</span><span class="p">,</span> <span class="n">val_transforms</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">NONE</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span> <span class="o">==</span> <span class="n">MissingStdMode</span><span class="o">.</span><span class="n">MULTIPLIER</span><span class="p">:</span>
+                <span class="n">std_image</span> <span class="o">=</span> <span class="n">frame</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_std_tensor</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported MissingStdMode: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">missing_std_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running_index</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">std_image</span><span class="p">,</span> <span class="n">metadata</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="clair_torch.datasets.custom_collate" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">custom_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Custom collate function for handling possible None std images. If any Nones are found in the batch, the whole
+batch is set to None.
+Args:
+    batch: the data batch from a Dataset as a tuple. Expects tuple of four items, similar to the return value.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.Tensor">Tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Batched data in a tuple</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.Tensor">Tensor</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li>Index tensor containing the indices that were utilized from the dataset</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="torch.Tensor">Tensor</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li>Image tensor</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="torch.Tensor">Tensor</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li>Possible uncertainty image tensor.</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="tuple">tuple</span>[<span title="torch.Tensor">Tensor</span>, <span title="torch.Tensor">Tensor</span>, <span title="torch.Tensor">Tensor</span> | None, <span title="dict">dict</span>[<span title="str">str</span>, <span title="torch.Tensor">Tensor</span>]]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li>Dictionary of metadata keys (str) and numeric values (torch.Tensor).</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+            <details class="quote">
+              <summary>Source code in <code>clair_torch/datasets/collate.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">custom_collate</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Custom collate function for handling possible None std images. If any Nones are found in the batch, the whole</span>
+<span class="sd">    batch is set to None.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        batch: the data batch from a Dataset as a tuple. Expects tuple of four items, similar to the return value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Batched data in a tuple</span>
+<span class="sd">        - Index tensor containing the indices that were utilized from the dataset</span>
+<span class="sd">        - Image tensor</span>
+<span class="sd">        - Possible uncertainty image tensor.</span>
+<span class="sd">        - Dictionary of metadata keys (str) and numeric values (torch.Tensor).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sorted_batch</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;exposure_time&#39;</span><span class="p">])</span>
+    <span class="n">indices</span><span class="p">,</span> <span class="n">val_images</span><span class="p">,</span> <span class="n">std_images</span><span class="p">,</span> <span class="n">metas</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sorted_batch</span><span class="p">)</span>
+
+    <span class="c1"># Collate val_images and metas normally.</span>
+    <span class="n">index_batch</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+    <span class="n">val_batch</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">val_images</span><span class="p">)</span>
+    <span class="n">meta_batch</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">metas</span><span class="p">)</span>
+
+    <span class="c1"># Std_images are either collated normally or the batch is set to None.</span>
+    <span class="n">contains_none</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">std</span> <span class="ow">in</span> <span class="n">std_images</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">std</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">contains_none</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">contains_none</span><span class="p">:</span>
+        <span class="n">std_batch</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">std_batch</span> <span class="o">=</span> <span class="n">default_collate</span><span class="p">(</span><span class="n">std_images</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">index_batch</span><span class="p">,</span> <span class="n">val_batch</span><span class="p">,</span> <span class="n">std_batch</span><span class="p">,</span> <span class="n">meta_batch</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
