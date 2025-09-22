@@ -42,18 +42,21 @@ class ICRFModelPCA(ICRFModelBase):
                 to this power.
             icrf: an optional initial form of the ICRF curves, overrides n_points and channels.
         """
-        n_points, num_components, channels = pca_basis.shape
+        channels, num_components, n_points = pca_basis.shape
 
         super().__init__(n_points, channels, interpolation_mode, initial_power, icrf)
 
         # Base curve power (learnable scalar), one parameter per channel.
-        self.p = nn.ParameterList([nn.Parameter(torch.tensor(2.0)) for _ in range(channels)])
+        self.p = nn.ParameterList([nn.Parameter(torch.tensor(self.initial_power)) for _ in range(channels)])
 
         # Model weights, num_components number per channel.
         self.coefficients = nn.ParameterList([nn.Parameter(torch.zeros(num_components)) for _ in range(channels)])
 
-        self.register_buffer("pca_basis", pca_basis)
-        self.register_buffer("x_values", torch.linspace(0, 1, n_points))  # (L,)
+        self.register_buffer("_pca_basis", pca_basis)
+
+    @property
+    def pca_basis(self):
+        return self._pca_basis
 
     def channel_params(self, c: int) -> list[nn.Parameter]:
         """
@@ -74,7 +77,7 @@ class ICRFModelPCA(ICRFModelBase):
         coefficient_tensor = torch.stack(list(self.coefficients))
 
         # x_values: (L,)
-        x_safe = self.x_values.clamp(min=1e-6).unsqueeze(1)  # (L, 1)
+        x_safe = self.x_axis_datapoints.clamp(min=1e-6).unsqueeze(1)  # (L, 1)
 
         # Compute per-channel base curve: (L, C)
         base_curve = x_safe.pow(p_tensor.unsqueeze(0))  # broadcasted over L
@@ -105,11 +108,13 @@ class ICRFModelDirect(ICRFModelBase):
 
         super().__init__(n_points, channels, interpolation_mode, initial_power, icrf)
 
-        self.direct_params = nn.ParameterList([
-            nn.Parameter(torch.linspace(0, 1, n_points) ** initial_power) for _ in range(channels)
-        ])
+        if icrf is not None:
+            self.direct_params = nn.ParameterList([nn.Parameter(icrf[c].clone().detach()) for c in range(self.channels)])
+        else:
+            base = torch.linspace(0, 1, n_points) ** initial_power
+            self.direct_params = nn.ParameterList([nn.Parameter(base.clone()) for _ in range(self.channels)])
 
-    def channel_params(self, c: int):
+    def channel_params(self, c: int) -> list[nn.Parameter]:
         """
         Main method for accessing the optimization parameters of the model.
         Args:
@@ -124,7 +129,7 @@ class ICRFModelDirect(ICRFModelBase):
         """
         Directly stack the per-channel parameters to form the ICRF.
         """
-        self._icrf = torch.stack([p for p in self.direct_params], dim=0)  # shape: (L, C)
+        self._icrf = torch.stack([p for p in self.direct_params], dim=0)
 
 
 if __name__ == "__main__":
