@@ -171,9 +171,11 @@ class ICRFModelBase(nn.Module, ABC):
 
         # helper that gathers LUT values for arbitrary index tensor
         def gather(ix):
-            flat_ix = ix.reshape(-1)  # safe flatten
-            channels = torch.arange(C, device=ix.device).repeat(N * H * W)
-            return self.icrf[channels, flat_ix].reshape(N, C, H, W)  # safe reshape
+            flat_ix = ix.reshape(-1)
+            # Build channel indices with same layout as ix
+            chan = torch.arange(C, device=ix.device).view(1, C, 1, 1)
+            chan = chan.expand(N, C, H, W).reshape(-1)
+            return self.icrf[chan, flat_ix].reshape(N, C, H, W)
 
         g0 = gather(x0)
         g1 = gather(x1)
@@ -213,12 +215,14 @@ class ICRFModelBase(nn.Module, ABC):
         weights = [w0, w1, w2, w3]  # each (N, C, H, W)
 
         # Broadcast gather: returns (N, C, H, W) for each index tensor
-        def gather_idx(ix):
-            flat_idx = ix.view(-1)
-            channels = torch.arange(C).repeat(N * H * W)
-            return self.icrf[channels, flat_idx].view(N, C, H, W)
+        def gather(ix):
+            flat_ix = ix.reshape(-1)
+            # Build channel indices with same layout as ix
+            chan = torch.arange(C, device=ix.device).view(1, C, 1, 1)
+            chan = chan.expand(N, C, H, W).reshape(-1)
+            return self.icrf[chan, flat_ix].reshape(N, C, H, W)
 
-        g = [gather_idx(ix) for ix in x_indices]
+        g = [gather(ix) for ix in x_indices]
 
         # Final smooth interpolated result
         result = torch.stack([w * gi for w, gi in zip(weights, g)], dim=0).sum(dim=0)
