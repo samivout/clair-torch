@@ -16,7 +16,7 @@ Main things still missing are:
 3. End-to-end tests.
 4. Large sections of the documentation.
 5. CI/CD features of the repository.
-6. Commandline interface for sample scripts.
+6. ~~Commandline interface for sample scripts.~~ (DONE)
 
 ## Contents
 
