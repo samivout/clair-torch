@@ -1,9 +1,11 @@
 import pytest
+from unittest.mock import patch, MagicMock
 
 from typeguard import TypeCheckError
 import torch
 import numpy as np
 
+import clair_torch.models.base
 from clair_torch.common.enums import InterpMode
 from clair_torch.models.icrf_model import ICRFModelDirect, ICRFModelPCA
 
@@ -223,4 +225,26 @@ class TestICRFModelDirect:
         # dydx = diff(y)/dx
         expected_dydx = np.diff(y, axis=1) / (x[1] - x[0])
         assert np.allclose(dydx, expected_dydx)
+
+    @patch("clair_torch.models.base.plt")
+    def test_icrf_model_direct_plot_icrf(self, plt_patch):
+
+        mock_fig = MagicMock()
+        plot_function_patch = patch.object(clair_torch.models.base, clair_torch.models.base.plot_data_and_diff.__name__,
+                                           return_value=(mock_fig, 1, 2, 3))
+
+        with plot_function_patch:
+
+            icrf_model = ICRFModelDirect(icrf=self.expected_initial_icrf.clone(), initial_power=1.0,
+                                         interpolation_mode=InterpMode.LINEAR)
+
+            icrf_model.plot_icrf()
+
+        plt_patch.ion.assert_called_once()
+        assert icrf_model._fig == mock_fig
+        mock_fig.canvas.draw.assert_called()
+        mock_fig.canvas.flush_events.assert_called()
+        assert icrf_model._axs == 1
+        assert icrf_model._lines_curve == 2
+        assert icrf_model._lines_deriv == 3
 
